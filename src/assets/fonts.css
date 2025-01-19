@@ -1,0 +1,8 @@
+
+
+@font-face {
+  font-family: 'MMO';
+  src: url('./fonts/MonomaniacOne-Regular.ttf') format('truetype');
+  font-weight: normal; /* Add 'bold' for bold styles */
+  font-style: normal;  /* Add 'italic' for italic styles */
+}
