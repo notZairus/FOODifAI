@@ -1,3 +1,6 @@
+import CameraIcon from "./assets/icons/camera.svg";
+
+
 function App() {
 
 
@@ -23,7 +26,7 @@ function App() {
           </div>
           <div className="flex items-center justify-center mt-8">
             <button className="aspect-square w-16  bg-lime-700 rounded-full flex items-center justify-center">
-              <img src="/src/assets/icons/camera.svg" alt="camera"  className="w-4/6"/>
+              <img src={CameraIcon} alt="camera"  className="w-4/6"/>
             </button>
           </div>
 
