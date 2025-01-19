@@ -1,7 +1,23 @@
 import CameraIcon from "./assets/icons/camera.svg";
+import { useState, useEffect, useRef } from "react";
 
 
 function App() {
+
+  const vidRef = useRef(null);
+
+  useEffect(() => {
+    const startCamera = async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: 'environment' 
+        }
+      });
+      vidRef.current.srcObject = stream;
+    }
+
+    startCamera();
+  }, []);
 
 
   return (
@@ -18,9 +34,10 @@ function App() {
         <section>
           <div className="aspect-square w-full">
             <video 
-              className="w-full h-full bg-red-400 mt-8 rounded-lg overflow-hidden"
+              ref={vidRef}
               playsInline
               autoPlay
+              className="w-full h-full bg-red-400 mt-8 rounded-lg overflow-hidden object-cover"
             >
             </video>
           </div>
