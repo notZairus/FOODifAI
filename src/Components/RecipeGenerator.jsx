@@ -1,10 +1,11 @@
 import CameraIcon from "../assets/icons/camera.svg";
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 
 
 export default function RecipeGenerator() {
 
+  const [images, setImages] = useState([]);
   const vidRef = useRef(null);
 
   useEffect(() => {
@@ -19,16 +20,18 @@ export default function RecipeGenerator() {
     startCamera();
   }, []);
 
-  function handleClick() {
+  function captureImage() {
     let canvas = document.createElement('canvas');
-    canvas.width = vidRef.current.width;
-    canvas.height = vidRef.current.height;
+    canvas.width = vidRef.current.videoWidth;
+    canvas.height = vidRef.current.videoHeight;
 
     let context = canvas.getContext('2d');
-    context.drawImage(vidRef.current, 0, 0);
+    context.drawImage(vidRef.current, 0, 0, canvas.width, canvas.height);
 
     canvas.toBlob((blob) => {
-      
+      const newImg = new File([blob], "newImage.png", {type: 'image/png'});
+      const newUrl = URL.createObjectURL(newImg);
+      setImages(prev => [...prev, newUrl]);
     })
   }
 
@@ -44,18 +47,19 @@ export default function RecipeGenerator() {
         </video>
       </div>
       <div className="flex items-center justify-center mt-8">
-        <button onClick={handleClick} className="aspect-square w-16  bg-lime-700 rounded-full flex items-center justify-center">
+        <button onClick={captureImage} className="aspect-square w-16  bg-lime-700 rounded-full flex items-center justify-center">
           <img src={CameraIcon} alt="camera"  className="w-4/6"/>
         </button>
       </div>
-      <div className="w-full bg-white/5 mt-8 grid grid-cols-4 gap-2 p-4 rounded-lg">
-        <div className="aspect-square bg-white"></div>
-        <div className="aspect-square bg-white"></div>
-        <div className="aspect-square bg-white"></div>
-        <div className="aspect-square bg-white"></div>
-        <div className="aspect-square bg-white"></div>
-        <div className="aspect-square bg-white"></div>
-      </div>
+      {images.length > 0 && <div className="w-full bg-white/5 mt-8 grid grid-cols-4 gap-2 p-4 rounded-lg">
+        {
+          images.map((image, index) => (
+            <div className="aspect-square bg-white flex rounded overflow-hidden">
+              <img src={image} alt={`captured-image-${index}`} className="flex-1"/>
+            </div>
+          ))
+        }
+      </div>}
     </>
   );
 }
