@@ -3,8 +3,9 @@ import { useState, useEffect, useRef } from "react";
 import { urlToImg, postToServer } from "../js/functions.js";
 import { scanUrl } from "../js/ai.js";
 import Swal from 'sweetalert2';
+import { nanoid } from "nanoid";
 import withReactContent from 'sweetalert2-react-content';
-import "@sweetalert2/theme-dark"
+import "@sweetalert2/theme-dark";
 
 
 
@@ -15,6 +16,7 @@ export default function RecipeGenerator({ setResult }) {
 
   const MySwal = withReactContent(Swal);
   
+
   useEffect(() => {
     const openCamera = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -27,16 +29,15 @@ export default function RecipeGenerator({ setResult }) {
     openCamera();
   }, []);
 
-
   useEffect(() => {
     if (images.length == 0) return;
 
-    const identifyIngredient = async (imgUrl) => {
-      const imgBlob = await urlToImg(imgUrl);
+    const identifyIngredient = async (image) => {
+      const imgBlob = await urlToImg(image.image_url);
       const url = await postToServer(imgBlob);
       const ingredient = await scanUrl(url);
 
-      setIngredients((prev) => [...prev, ingredient]);
+      setIngredients((prev) => ([...prev, {'id':image.id, 'ingredient': ingredient}]));
     }
 
     identifyIngredient(images[images.length - 1]);
@@ -55,7 +56,8 @@ export default function RecipeGenerator({ setResult }) {
     canvas.toBlob((blob) => {
       const newImg = new File([blob], "newImage.png", {type: 'image/png'});
       const newUrl = URL.createObjectURL(newImg);
-      setImages(prev => [...prev, newUrl]);
+
+      setImages(prev => [...prev, {'id': nanoid(), image_url: newUrl}]);
     })
   }
 
@@ -91,7 +93,7 @@ export default function RecipeGenerator({ setResult }) {
             {
               images.map((image, index) => (
                 <div className="aspect-square bg-white flex rounded overflow-hidden">
-                  <img src={image} alt={`captured-image-${index}`} className="flex-1"/>
+                  <img src={image.image_url} alt={`captured-image-${index}`} className="flex-1"/>
                 </div>
               ))
             }

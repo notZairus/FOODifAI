@@ -21,6 +21,7 @@ async function postToServer(imgBlob) {
 
   let result = await response.json();
 
+  console.log(result);
   return result.data.url;
 }
 
