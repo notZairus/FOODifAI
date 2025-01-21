@@ -15,7 +15,6 @@ export default function RecipeGenerator({ setResult }) {
 
   const MySwal = withReactContent(Swal);
   
-  
   useEffect(() => {
     const openCamera = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({ 
