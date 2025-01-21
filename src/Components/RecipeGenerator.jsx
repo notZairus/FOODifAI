@@ -4,7 +4,7 @@ import { urlToImg, postToServer } from "../js/functions.js";
 import { scanUrl } from "../js/ai.js";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import "@sweetalert2/theme-dark";
+import "@sweetalert2/theme-dark"
 
 
 
@@ -14,6 +14,7 @@ export default function RecipeGenerator({ setResult }) {
   const vidRef = useRef(null);
 
   const MySwal = withReactContent(Swal);
+  
   
   useEffect(() => {
     const openCamera = async () => {
@@ -26,6 +27,7 @@ export default function RecipeGenerator({ setResult }) {
     }
     openCamera();
   }, []);
+
 
   useEffect(() => {
     if (images.length == 0) return;
@@ -42,6 +44,7 @@ export default function RecipeGenerator({ setResult }) {
 
   }, [images]);
 
+
   function captureImage() {
     let canvas = document.createElement('canvas');
     canvas.width = vidRef.current.videoWidth;
@@ -57,10 +60,11 @@ export default function RecipeGenerator({ setResult }) {
     })
   }
 
+  
   function generateRecipe() {
     MySwal.fire({
       title: "Wait a sec.",
-      text: "Wait until all the images are analyzed :))))))))))))",
+      text: `images: ${images.length} || ingredients: ${ingredients.length}`,
       icon: "warning"
     });
   }
