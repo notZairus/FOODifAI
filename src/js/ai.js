@@ -17,7 +17,7 @@ async function scanUrl(imageUrl) {
           {
             type: "image_url",
             image_url: {
-              url: "https://i.imgur.com/wCc3fwC.jpeg"
+              url: imageUrl
             }
           }
         ]
