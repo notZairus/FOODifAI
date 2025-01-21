@@ -5,6 +5,8 @@ function App() {
 
   const [result, setResult] = useState(null);
 
+  console.log(result);
+
   return (
     <>
       <div className="lg:w-[480px] mx-auto w-screen min-h-screen py-8 px-9 font-mmo bg-zinc-800 flex flex-col items-center">

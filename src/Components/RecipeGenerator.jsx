@@ -1,11 +1,11 @@
 import CameraIcon from "../assets/icons/camera.svg";
 import { useState, useEffect, useRef } from "react";
 import { urlToImg, postToServer } from "../js/functions.js";
-import { scanUrl } from "../js/ai.js";
-import Swal from 'sweetalert2';
+import { scanImageUrl, generateRecipe } from "../js/ai.js";
 import { nanoid } from "nanoid";
+import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import "@sweetalert2/theme-dark";
+
 
 
 
@@ -15,6 +15,9 @@ export default function RecipeGenerator({ setResult }) {
   const vidRef = useRef(null);
 
   const MySwal = withReactContent(Swal);
+
+  console.log(images);
+  console.log(ingredients);
   
 
   useEffect(() => {
@@ -35,7 +38,7 @@ export default function RecipeGenerator({ setResult }) {
     const identifyIngredient = async (image) => {
       const imgBlob = await urlToImg(image.image_url);
       const url = await postToServer(imgBlob);
-      const ingredient = await scanUrl(url);
+      const ingredient = await scanImageUrl(url);
 
       setIngredients((prev) => ([...prev, {'id':image.id, 'ingredient': ingredient}]));
     }
@@ -61,13 +64,17 @@ export default function RecipeGenerator({ setResult }) {
     })
   }
 
-  
-  function generateRecipe() {
-    MySwal.fire({
-      title: "Wait a sec.",
-      text: `images: ${images.length} || ingredients: ${ingredients.length}`,
-      icon: "warning"
-    });
+  function getRecipe() {
+    if (images.length != ingredients.length) {
+      MySwal.fire({
+        title: "Wait a sec.",
+        text: `images: ${images.length} || ingredients: ${ingredients.length}`,
+        icon: "warning",
+      });
+      return;
+    }
+
+    let recipe = generateRecipe(ingredients);
   }
 
   return (
@@ -100,7 +107,10 @@ export default function RecipeGenerator({ setResult }) {
           </div>
 
           <div className="w-full flex justify-center">
-            <button className="bg-lime-700 text-white px-8 py-4 text-xl rounded-full" onClick={generateRecipe}>
+            <button 
+              className="bg-lime-700 text-white px-8 py-4 text-xl rounded-full" 
+              onClick={getRecipe}
+            >
               Generate Recipe 
             </button>
           </div>
