@@ -50,6 +50,7 @@ async function generateRecipe(arrayOfIngredients) {
             the structure of json string u will return should look exactly like this.
 
             {
+              "ai_message": "You didn't give me any ingredient. But heres a classic Adobo",
               "name": "Adobo",
               "ingredients": [
                 "1 kg Chicken or Beef",
@@ -77,7 +78,7 @@ async function generateRecipe(arrayOfIngredients) {
                 "cholesterol: 20mg"
               ]
             }
-              
+
             `
           },
         ]

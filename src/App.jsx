@@ -9,6 +9,11 @@ function App() {
 
   console.log(result);
 
+  useEffect(() => {
+    if (!result) return;
+    resultRef.current.scrollIntoView({behavior: 'smooth'});
+  }, [result])
+
   return (
     <>
       <div className="lg:w-[480px] mx-auto w-screen min-h-screen py-8 px-9 font-mmo bg-zinc-800 flex flex-col items-center">
@@ -26,41 +31,45 @@ function App() {
           </section>
 
           {result && <section className="text-justify bg-lime-700 shadow-md rounded-lg mb-12 text-white/90 p-4">
-            <h1 className="text-3xl" ref={resultRef}>Result</h1>
+            <h1 className="text-3xl" ref={resultRef}>{result.name}</h1>
             
-
-            {/* <div>
+            <div>
               <div className="mt-4 space-y-4">
                 
                 <div>
                   <h2 className="text-xl">Ingredients</h2>
-                  <ul className="tracking-wider">
-                    <li>list1 sadasds </li>
-                    <li>list2</li>
+                  <ul className="tracking-wider list-disc list-inside">
+                    {
+                      result.ingredients.map(ingredient => (
+                        <li>{ingredient}</li>
+                      ))
+                    }
                   </ul>
                 </div>
   
                 <div>
                   <h2 className="text-xl">Steps</h2>
-                  <ul className="tracking-wider">
-                    <li>list1 sadasds </li>
-                    <li>list2</li>
-                    <li>list2</li>
-                    <li>list2</li>
-                    <li>list2</li>
-                    <li>list2</li>
-                    <li>list2</li>
-                    <li>list2</li>
-                    <li>list2</li>
-                    <li>list2</li>
-                    <li>list2</li>
-                    <li>list2</li>
-                    <li>list2</li>
-                    <li>list2</li>
+                  <ul className="tracking-wider list-decimal list-inside">
+                  {
+                      result.steps.map(step => (
+                        <li>{step}</li>
+                      ))
+                    }
                   </ul>
                 </div>
+
+                <div>
+                  <h2 className="text-xl">Nutrients per 100g</h2>
+                  <ul className="tracking-wider list-decimal list-inside">
+                  {
+                      result.nutrients_per_100g.map(nutrient => (
+                        <li>{nutrient}</li>
+                      ))
+                    }
+                  </ul>
+                </div>
+              </div>
             </div>
-            </div> */}
 
           </section>}
 
