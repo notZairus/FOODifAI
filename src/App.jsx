@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import RecipeGenerator from "./Components/RecipeGenerator.jsx";
-import ReactMarkdown from "react-markdown";
 
 function App() {
 
