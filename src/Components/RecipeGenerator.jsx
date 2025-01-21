@@ -64,7 +64,7 @@ export default function RecipeGenerator({ setResult }) {
     })
   }
 
-  function getRecipe() {
+  async function getRecipe() {
     if (images.length != ingredients.length) {
       MySwal.fire({
         title: "Wait a sec.",
@@ -74,7 +74,9 @@ export default function RecipeGenerator({ setResult }) {
       return;
     }
 
-    let recipe = generateRecipe(ingredients);
+    let response = await generateRecipe(ingredients);
+    let recipe = JSON.parse(response)
+    setResult(recipe);
   }
 
   return (

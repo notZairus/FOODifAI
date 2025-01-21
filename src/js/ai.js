@@ -41,7 +41,44 @@ async function generateRecipe(arrayOfIngredients) {
         content: [
           {
             type: "text",
-            text: `Tell me what filipino recipe i can make with this ingredients: ${ingredients}`
+            text: `
+            
+            Tell me what filipino recipe i can make with this ingredients: ${ingredients}. 
+            stricly only return a json string.
+            if there is no given ingredient, or when the ingredient is not clear. return a random filipino recipe with all its ingredients, steps, and nutrients per 100 grams.
+            
+            the structure of json string u will return should look exactly like this.
+
+            {
+              "name": "Adobo",
+              "ingredients": [
+                "1 kg Chicken or Beef",
+                "3 cloves of Garlic, 1 onion, 1 cup ofetta Tomato",
+                "1 teaspoon of Ground Black Pepper, 1 teaspoon of Salt, 2 bay leaves",
+                "2 tablespoons of Vinegar, 2 tablespoons of Soy Sauce, 1 tablespoon of Fish Sauce (optional)",
+                "2 tablespoons of Vegetable Oil"
+              ],
+              "steps": [
+                "Heat oil in a pan over medium heat",
+                "Sauté garlic and onions until softened",
+                "Add meat and cook until browned",
+                "Add tomato, pepper, salt, and bay leaves",
+                "Pour in vinegar, soy sauce, and fish sauce (if using)",
+                "Simmer for 30 minutes",
+                "Serve hot"
+              ],
+              "nutrients_per_100g": [
+                "calories: 250",
+                "carbohydrates: 20g",
+                "protein: 15g",
+                "fat: 10g",
+                "sodium: 500mg",
+                "potassium: 400mg",
+                "cholesterol: 20mg"
+              ]
+            }
+              
+            `
           },
         ]
       }
@@ -49,7 +86,7 @@ async function generateRecipe(arrayOfIngredients) {
     max_tokens: 500
   });
   
-  console.log(chatCompletion.choices[0].message.content);
+  return chatCompletion.choices[0].message.content;
 }
 
 

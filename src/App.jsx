@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import RecipeGenerator from "./Components/RecipeGenerator.jsx";
+import ReactMarkdown from "react-markdown";
 
 function App() {
 
   const [result, setResult] = useState(null);
+  const resultRef = useRef(null);
 
   console.log(result);
 
@@ -24,38 +26,41 @@ function App() {
           </section>
 
           {result && <section className="text-justify bg-lime-700 shadow-md rounded-lg mb-12 text-white/90 p-4">
-            <h1 className="text-3xl">Result</h1>
+            <h1 className="text-3xl" ref={resultRef}>Result</h1>
+            
 
-            <div className="mt-4 space-y-4">
-              
-              <div>
-                <h2 className="text-xl">Ingredients</h2>
-                <ul className="tracking-wider">
-                  <li>list1 sadasds </li>
-                  <li>list2</li>
-                </ul>
-              </div>
-
-              <div>
-                <h2 className="text-xl">Steps</h2>
-                <ul className="tracking-wider">
-                  <li>list1 sadasds </li>
-                  <li>list2</li>
-                  <li>list2</li>
-                  <li>list2</li>
-                  <li>list2</li>
-                  <li>list2</li>
-                  <li>list2</li>
-                  <li>list2</li>
-                  <li>list2</li>
-                  <li>list2</li>
-                  <li>list2</li>
-                  <li>list2</li>
-                  <li>list2</li>
-                  <li>list2</li>
-                </ul>
-              </div>
+            {/* <div>
+              <div className="mt-4 space-y-4">
+                
+                <div>
+                  <h2 className="text-xl">Ingredients</h2>
+                  <ul className="tracking-wider">
+                    <li>list1 sadasds </li>
+                    <li>list2</li>
+                  </ul>
+                </div>
+  
+                <div>
+                  <h2 className="text-xl">Steps</h2>
+                  <ul className="tracking-wider">
+                    <li>list1 sadasds </li>
+                    <li>list2</li>
+                    <li>list2</li>
+                    <li>list2</li>
+                    <li>list2</li>
+                    <li>list2</li>
+                    <li>list2</li>
+                    <li>list2</li>
+                    <li>list2</li>
+                    <li>list2</li>
+                    <li>list2</li>
+                    <li>list2</li>
+                    <li>list2</li>
+                    <li>list2</li>
+                  </ul>
+                </div>
             </div>
+            </div> */}
 
           </section>}
 
