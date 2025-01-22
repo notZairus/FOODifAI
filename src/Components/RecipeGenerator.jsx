@@ -84,6 +84,7 @@ export default function RecipeGenerator({ setResult }) {
       
       setResult({
           "name": "Adobo",
+          "ai_message": "You didn't give me any ingredient. But heres a classic Adobo",
           "ingredients": [
             "1 kg Chicken or Beef",
             "3 cloves of Garlic, 1 onion, 1 cup ofetta Tomato",

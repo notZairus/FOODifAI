@@ -35,9 +35,9 @@ function App() {
             <div>
               <div className="mt-4 space-y-4">
 
-                <div>
+                {result.ai_message && <div>
                   <p className="text-xl">AI: {result.ai_message}</p>
-                </div>
+                </div>}
                 
                 <div>
                   <h2 className="text-xl">Ingredients</h2>
