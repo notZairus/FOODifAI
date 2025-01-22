@@ -48,7 +48,7 @@ async function generateRecipe(arrayOfIngredients) {
             if there is no given ingredient, or when the ingredient is not clear. return a random filipino recipe with all its ingredients, steps, and nutrients per 100 grams.
             
             the structure of json string u will return should look exactly like this.
-            no key should have a null or empty values.
+            no key should have a null or empty values. especially ai_message.
 
             {
               "ai_message": "You didn't provide any ingredient.",

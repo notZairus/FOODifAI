@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import RecipeGenerator from "./Components/RecipeGenerator.jsx";
+import FoodAnalysis from "./Components/FoodAnalysis.jsx";
 
 function App() {
 
+  const [mode, setMode] = useState("RecipeGenerator");
   const [result, setResult] = useState(null);
   const resultRef = useRef(null);
 
-  console.log(result);
 
   useEffect(() => {
     if (!result) return;
@@ -16,20 +17,44 @@ function App() {
     }
   }, [result])
 
+
   return (
     <>
       <div className="lg:w-[480px] mx-auto w-screen min-h-screen py-8 px-9 font-mmo flex flex-col items-center">
         <h1 className="text-accent text-5xl text-center tracking-normal">FOODifAI</h1>
 
-        <div className="w-full bg-accent/10 mt-8 rounded-full flex items-center tracking-wider">
-          <div className="h-14 flex-1 text-white/90 justify-center items-center flex  bg-accent rounded-full">Recipe Generator</div>
-          <div className="h-14 flex-1 text-black/20 justify-center items-center flex rounded-full">Food Analysis</div>
+        <div className="w-full h-12 bg-accent/15 mt-8 rounded-full flex items-center tracking-wider text-lg">
+          <button 
+            onClick={() => {setMode('RecipeGenerator')}} 
+            className={
+              mode == 'RecipeGenerator' 
+              ? 'h-full flex-1 transition-all duration-300 text-white/90 justify-center items-center flex  bg-accent rounded-l-full'
+              : 'h-full flex-1 transition-all duration-200 text-black/20 justify-center items-center flex rounded-full'
+            }
+            >
+              Generate Recipe
+          </button>
+
+          <button 
+            onClick={() => {setMode('FoodAnalysis')}} 
+            className={
+              mode == 'FoodAnalysis' 
+              ? 'h-full flex-1 transition-all duration-300 text-white/90 justify-center items-center flex  bg-accent rounded-r-full'
+              : 'h-full flex-1 transition-all duration-200 text-black/20 justify-center items-center flex rounded-full'
+            }
+            >
+              Analyze Food
+          </button>
         </div>
 
         <main>
   
           <section className="mb-12">
-            <RecipeGenerator setResult={setResult}/>
+            { 
+              mode == "RecipeGenerator" 
+                ? <RecipeGenerator setResult={setResult}/>
+                : <FoodAnalysis setResult={setResult}/>
+            }
           </section>
 
           {result && result.is_ingredient && <section className="text-justify bg-accent shadow-md rounded-lg mb-12 text-white/90 p-4">
@@ -81,7 +106,6 @@ function App() {
           </section>}
 
           {result && !result.is_ingredient && <section className="text-justify bg-accent shadow-md rounded-lg mb-12 text-white/90 p-4">
-            
             
             <div>
               <div className="space-y-4">

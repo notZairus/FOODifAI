@@ -84,7 +84,7 @@ export default function RecipeGenerator({ setResult }) {
       
       setResult({
           "name": "Adobo",
-          "ai_message": "You didn't give me any ingredient.",
+          "ai_message": "You didn't give any ingredient.",
           "is_ingredient": false,
           "ingredients": [
             "1 kg Chicken or Beef",
@@ -117,12 +117,15 @@ export default function RecipeGenerator({ setResult }) {
 
   return (
     <>
+      <div>
+        <h2 className="text-accent mt-6 mb-1 text-center">Recipe Generator</h2>
+      </div>
       <div className="aspect-square w-full">
         <video 
           ref={vidRef}
           playsInline
           autoPlay
-          className="w-full h-full bg-red-400 mt-8 rounded-lg overflow-hidden object-cover"
+          className="w-full h-full bg-red-400 rounded-lg overflow-hidden object-cover"
         >
         </video>
       </div>
