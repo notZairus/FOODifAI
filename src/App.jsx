@@ -34,6 +34,10 @@ function App() {
             
             <div>
               <div className="mt-4 space-y-4">
+
+                <div>
+                  <p className="text-xl">AI: {result.ai_message}</p>
+                </div>
                 
                 <div>
                   <h2 className="text-xl">Ingredients</h2>
@@ -59,7 +63,7 @@ function App() {
 
                 <div>
                   <h2 className="text-xl">Nutrients per 100g</h2>
-                  <ul className="tracking-wider list-decimal list-inside">
+                  <ul className="tracking-wider list-disc list-inside">
                   {
                       result.nutrients_per_100g.map(nutrient => (
                         <li>{nutrient}</li>
