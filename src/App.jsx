@@ -8,15 +8,14 @@ function App() {
   const [result, setResult] = useState(null);
   const resultRef = useRef(null);
 
+  console.log(result);
 
   useEffect(() => {
     if (!result) return;
-
-    if (result.is_ingredient) {
+    if (resultRef.current) {
       resultRef.current.scrollIntoView({behavior: 'smooth'});
     }
   }, [result])
-
 
   return (
     <>
@@ -34,7 +33,6 @@ function App() {
             >
               Generate Recipe
           </button>
-
           <button 
             onClick={() => {setMode('FoodAnalysis')}} 
             className={
@@ -57,68 +55,62 @@ function App() {
             }
           </section>
 
-          {result && result.is_ingredient && <section className="text-justify bg-accent shadow-md rounded-lg mb-12 text-white/90 p-4">
-            
-            <h1 className="text-3xl" ref={resultRef}>{result.name}</h1>
-            
-            <div>
-              <div className="mt-4 space-y-4">
-
-                {result.ai_message &&<div>
-                  <p className="text-xl">{result.ai_message}</p>
-                </div>}
-                
+          {result && mode == "RecipeGenerator" ? (
+            result.is_ingredient ? (
+              <section className="text-justify bg-accent shadow-md rounded-lg mb-12 text-white/90 p-4">
+                <h1 className="text-3xl" ref={resultRef}>{result.name}</h1>
                 <div>
-                  <h2 className="text-xl">Ingredients</h2>
-                  <ul className="tracking-wider list-disc list-inside">
-                    {
-                      result.ingredients.map(ingredient => (
-                        <li>{ingredient}</li>
-                      ))
-                    }
-                  </ul>
+                  <div className="mt-4 space-y-4">
+                    {result.ai_message &&<div>
+                      <p className="text-xl">{result.ai_message}</p>
+                    </div>}
+                    <div>
+                      <h2 className="text-xl">Ingredients</h2>
+                      <ul className="tracking-wider list-disc list-inside">
+                        {
+                          result.ingredients.map(ingredient => (
+                            <li>{ingredient}</li>
+                          ))
+                        }
+                      </ul>
+                    </div>
+                    <div>
+                      <h2 className="text-xl">Steps</h2>
+                      <ul className="tracking-wider list-decimal list-inside">
+                      {
+                          result.steps.map(step => (
+                            <li>{step}</li>
+                          ))
+                        }
+                      </ul>
+                    </div>
+                    <div>
+                      <h2 className="text-xl">Nutrients per 100g</h2>
+                      <ul className="tracking-wider list-disc list-inside">
+                      {
+                          result.nutrients_per_100g.map(nutrient => (
+                            <li>{nutrient}</li>
+                          ))
+                        }
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-  
+              </section>
+            ) : (
+              <section className="text-justify bg-accent shadow-md rounded-lg mb-12 text-white/90 p-4">
                 <div>
-                  <h2 className="text-xl">Steps</h2>
-                  <ul className="tracking-wider list-decimal list-inside">
-                  {
-                      result.steps.map(step => (
-                        <li>{step}</li>
-                      ))
-                    }
-                  </ul>
+                  <div className="space-y-4">
+                    {result.ai_message && <div>
+                      <p className="text-xl">{result.ai_message}</p>
+                    </div>}
+                  </div>
                 </div>
-
-                <div>
-                  <h2 className="text-xl">Nutrients per 100g</h2>
-                  <ul className="tracking-wider list-disc list-inside">
-                  {
-                      result.nutrients_per_100g.map(nutrient => (
-                        <li>{nutrient}</li>
-                      ))
-                    }
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-          </section>}
-
-          {result && !result.is_ingredient && <section className="text-justify bg-accent shadow-md rounded-lg mb-12 text-white/90 p-4">
-            
-            <div>
-              <div className="space-y-4">
-                {result.ai_message && <div>
-                  <p className="text-xl">{result.ai_message}</p>
-                </div>}
-              </div>
-            </div>
-
-          </section>}
+              </section>
+            )
+          ) : null}
 
         </main> 
-
       </div>
     </>
   )
