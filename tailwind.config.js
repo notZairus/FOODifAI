@@ -9,6 +9,9 @@ export default {
       fontFamily: {
         mmo: ['MMO', 'sans-serif'], // Add your custom font
       },
+      colors: {
+        accent: "#16D532",
+      }
     },
   },
   plugins: [],

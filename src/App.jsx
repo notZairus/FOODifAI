@@ -15,12 +15,12 @@ function App() {
 
   return (
     <>
-      <div className="lg:w-[480px] mx-auto w-screen min-h-screen py-8 px-9 font-mmo bg-zinc-800 flex flex-col items-center">
-        <h1 className="text-white text-5xl text-center tracking-normal">FOODifAI</h1>
+      <div className="lg:w-[480px] mx-auto w-screen min-h-screen py-8 px-9 font-mmo bg-white flex flex-col items-center">
+        <h1 className="text-accent text-5xl text-center tracking-normal">FOODifAI</h1>
 
-        <div className="w-full bg-black/15 mt-8 rounded-full flex items-center tracking-wider">
-          <div className="h-14 flex-1 text-white/90 justify-center items-center flex  bg-lime-700 rounded-full">Recipe Generator</div>
-          <div className="h-14 flex-1 text-white/60 justify-center items-center flex rounded-full">Food Analysis</div>
+        <div className="w-full bg-accent/10 mt-8 rounded-full flex items-center tracking-wider">
+          <div className="h-14 flex-1 text-white/90 justify-center items-center flex  bg-accent rounded-full">Recipe Generator</div>
+          <div className="h-14 flex-1 text-black/20 justify-center items-center flex rounded-full">Food Analysis</div>
         </div>
 
         <main>
@@ -29,7 +29,7 @@ function App() {
             <RecipeGenerator setResult={setResult}/>
           </section>
 
-          {result && <section className="text-justify bg-lime-700 shadow-md rounded-lg mb-12 text-white/90 p-4">
+          {result && <section className="text-justify bg-accent shadow-md rounded-lg mb-12 text-white/90 p-4">
             <h1 className="text-3xl" ref={resultRef}>{result.name}</h1>
             
             <div>

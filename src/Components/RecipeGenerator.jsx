@@ -126,12 +126,12 @@ export default function RecipeGenerator({ setResult }) {
         </video>
       </div>
       <div className="flex items-center justify-center mt-8">
-        <button onClick={captureImage} className="aspect-square w-16  bg-lime-700 rounded-full flex items-center justify-center">
+        <button onClick={captureImage} className="aspect-square w-16  bg-accent rounded-full flex items-center justify-center">
           <img src={CameraIcon} alt="camera"  className="w-4/6"/>
         </button>
       </div>
       {images.length > 0 && 
-        <div className="w-full bg-white/5 mt-8 gap-2 p-4 pb-6 space-y-8 rounded-lg">
+        <div className="w-full bg-black/10 mt-8 gap-2 p-4 pb-6 space-y-8 rounded-lg">
           
           <div className="w-full gap-2 rounded-lg grid grid-cols-4">
             {
@@ -145,7 +145,7 @@ export default function RecipeGenerator({ setResult }) {
 
           <div className="w-full flex justify-center">
             <button 
-              className="bg-lime-700 text-white px-8 py-4 text-xl rounded-full" 
+              className="bg-accent text-white px-8 py-4 text-xl rounded-full" 
               onClick={getRecipe}
             >
               Generate Recipe 
