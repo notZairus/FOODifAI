@@ -10,7 +10,7 @@ export default {
         mmo: ['MMO', 'sans-serif'], // Add your custom font
       },
       colors: {
-        accent: "#16D532",
+        accent: "#E5C241",
       }
     },
   },

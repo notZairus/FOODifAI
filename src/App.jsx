@@ -10,12 +10,15 @@ function App() {
 
   useEffect(() => {
     if (!result) return;
-    resultRef.current.scrollIntoView({behavior: 'smooth'});
+
+    if (result.is_ingredient) {
+      resultRef.current.scrollIntoView({behavior: 'smooth'});
+    }
   }, [result])
 
   return (
     <>
-      <div className="lg:w-[480px] mx-auto w-screen min-h-screen py-8 px-9 font-mmo bg-white flex flex-col items-center">
+      <div className="lg:w-[480px] mx-auto w-screen min-h-screen py-8 px-9 font-mmo flex flex-col items-center">
         <h1 className="text-accent text-5xl text-center tracking-normal">FOODifAI</h1>
 
         <div className="w-full bg-accent/10 mt-8 rounded-full flex items-center tracking-wider">
@@ -29,14 +32,15 @@ function App() {
             <RecipeGenerator setResult={setResult}/>
           </section>
 
-          {result && <section className="text-justify bg-accent shadow-md rounded-lg mb-12 text-white/90 p-4">
+          {result && result.is_ingredient && <section className="text-justify bg-accent shadow-md rounded-lg mb-12 text-white/90 p-4">
+            
             <h1 className="text-3xl" ref={resultRef}>{result.name}</h1>
             
             <div>
               <div className="mt-4 space-y-4">
 
-                {result.ai_message && <div>
-                  <p className="text-xl">AI: {result.ai_message}</p>
+                {result.ai_message &&<div>
+                  <p className="text-xl">{result.ai_message}</p>
                 </div>}
                 
                 <div>
@@ -71,6 +75,19 @@ function App() {
                     }
                   </ul>
                 </div>
+              </div>
+            </div>
+
+          </section>}
+
+          {result && !result.is_ingredient && <section className="text-justify bg-accent shadow-md rounded-lg mb-12 text-white/90 p-4">
+            
+            
+            <div>
+              <div className="space-y-4">
+                {result.ai_message && <div>
+                  <p className="text-xl">{result.ai_message}</p>
+                </div>}
               </div>
             </div>
 
