@@ -9,15 +9,20 @@ async function scanImageUrl(imageUrl) {
     model: "meta-llama/Llama-3.2-11B-Vision-Instruct",
     messages: [
       {
-        role: "system",
-        content: "You are an assistant that will strictly follow what the user want."
-      },
-      {
         role: "user",
         content: [
           {
             type: "text",
-            text: "Tell me what ingredient is in the image. Your respond should only have 2 word max and it should never have a period('.') at the end of the sentence."
+            text: `Analyze and tell me what ingredient is in the image. You strictly need to respond with a JSON string starting with '{' and ends with '}' the json structure is as follows 
+                  {
+                    "ai_message": string,
+                    "image_is_intelligible": boolean,
+                    "there_is_an_ingredient": boolean,
+                    "ingredient": string
+                  }
+                .
+                All your messages/remarks should be on the "ai_message" key.
+                `
           },
           {
             type: "image_url",
@@ -30,14 +35,14 @@ async function scanImageUrl(imageUrl) {
     ],
     max_tokens: 500
   });
+
+  console.log(chatCompletion.choices[0].message.content);
   
   return chatCompletion.choices[0].message.content;
 }
 
 async function generateRecipe(arrayOfIngredients) {
   let ingredients = arrayOfIngredients.map(ingredient => ingredient.ingredient).join(", ");
-
-  console.log('sada');
 
   const chatCompletion = await client.chatCompletion({
     model: "mistralai/Mistral-Nemo-Instruct-2407",

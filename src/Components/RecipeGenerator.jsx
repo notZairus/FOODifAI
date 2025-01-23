@@ -46,13 +46,14 @@ export default function RecipeGenerator({ setResult }) {
       const newUrl = URL.createObjectURL(newImg);
       const imgBlob = await urlToImg(newUrl);
       const url = await postToServer(imgBlob);
-      const ingredient = await scanImageUrl(url);
+      const ingredientJson = JSON.parse(await scanImageUrl(url));
 
-      MySwal.fire({
+      if (ingredientJson.image_is_intelligible && ingredientJson.there_is_an_ingredient) {
+        MySwal.fire({
           title: 'Ingredient Detected',
           input: 'text',
           inputPlaceholder: 'Type the correct ingredient',
-          inputValue: ingredient.replace(".", ""),
+          inputValue: ingredientJson.ingredient.replace(".", ""),
           showCancelButton: true,
           confirmButtonText: 'Confirm',
           preConfirm: (value) => {
@@ -68,6 +69,12 @@ export default function RecipeGenerator({ setResult }) {
             setIngredients((prev) => ([...prev, {'id': id, 'ingredient': result.value}]));
           } 
       });
+      } else {
+        MySwal.fire({
+          title: "Ingredient Undetected.",
+          icon: "error",
+        });
+      }
     })
   }
 
