@@ -18,8 +18,8 @@ export default function RecipeGenerator({ setResult }) {
 
   console.log(images);
   console.log(ingredients);
-  
 
+  
   useEffect(() => {
     const openCamera = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -32,21 +32,6 @@ export default function RecipeGenerator({ setResult }) {
     openCamera();
   }, []);
 
-  useEffect(() => {
-    if (images.length == 0) return;
-
-    const identifyIngredient = async (image) => {
-      const imgBlob = await urlToImg(image.image_url);
-      const url = await postToServer(imgBlob);
-      const ingredient = await scanImageUrl(url);
-
-      setIngredients((prev) => ([...prev, {'id':image.id, 'ingredient': ingredient}]));
-    }
-
-    identifyIngredient(images[images.length - 1]);
-
-  }, [images]);
-
 
   function captureImage() {
     let canvas = document.createElement('canvas');
@@ -56,19 +41,25 @@ export default function RecipeGenerator({ setResult }) {
     let context = canvas.getContext('2d');
     context.drawImage(vidRef.current, 0, 0, canvas.width, canvas.height);
 
-    canvas.toBlob((blob) => {
+    canvas.toBlob(async (blob) => {
       const newImg = new File([blob], "newImage.png", {type: 'image/png'});
       const newUrl = URL.createObjectURL(newImg);
+      const imgBlob = await urlToImg(newUrl);
+      const url = await postToServer(imgBlob);
+      const ingredient = await scanImageUrl(url);
 
-      setImages(prev => [...prev, {'id': nanoid(), image_url: newUrl}]);
+      const id = nanoid();
+
+      setImages((prev) => [...prev, {'id': id, image_url: newUrl}]);
+      setIngredients((prev) => ([...prev, {'id': id, 'ingredient': ingredient}]));
     })
   }
 
   async function getRecipe() {
     if (images.length != ingredients.length) {
       MySwal.fire({
-        title: "Wait a sec.",
-        text: `images: ${images.length} || ingredients: ${ingredients.length}`,
+        title: "Analyzing...",
+        text: `Wait for me to analyze all images.`,
         icon: "warning",
       });
       return;
@@ -115,6 +106,27 @@ export default function RecipeGenerator({ setResult }) {
     }
   }
 
+  function deleteIngredient(object) {
+    if (images.length != ingredients.length) {
+      MySwal.fire({
+        title: "Analyzing...",
+        text: `Wait for me to analyze all images.`,
+        icon: "warning",
+      });
+      return;
+    }
+
+    let id = object.id;
+
+    setImages(prev => (
+      prev.filter(image => image.id !== id)
+    ))
+
+    setIngredients(prev => (
+       prev.filter(ingredient => ingredient.id !== id)
+    ))
+  }
+
   return (
     <>
       <div>
@@ -140,7 +152,7 @@ export default function RecipeGenerator({ setResult }) {
           <div className="w-full gap-2 rounded-lg grid grid-cols-4">
             {
               images.map((image, index) => (
-                <div className="aspect-square bg-white flex rounded overflow-hidden">
+                <div onClick={() => deleteIngredient(image)} className="aspect-square bg-white flex rounded overflow-hidden">
                   <img src={image.image_url} alt={`captured-image-${index}`} className="flex-1"/>
                 </div>
               ))

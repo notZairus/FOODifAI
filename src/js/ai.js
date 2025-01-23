@@ -38,7 +38,7 @@ async function generateRecipe(arrayOfIngredients) {
     messages: [
       {
         'role': 'system',
-        'content': `You are an assistant that suggests a well-known Filipino recipe based on a list of ingredients provided by the user. The recipe can include two additional ingredients the user didn’t mention. Always respond with a JSON string that starts with '{' and ends with '}'. Avoid any explanations or extra text outside the JSON string. If no ingredients are provided, or if the ingredients are unclear, return a random well-known Filipino recipe complete with its name, ingredients, steps, and nutrient information per 100 grams.`
+        'content': `You are an assistant that suggests a well-known Filipino recipe based on a list of ingredients provided by the user. The recipe can include two additional ingredients the user didn’t mention. Always respond with a JSON string that starts with '{' and ends with '}'. Avoid any explanations or extra text outside the JSON string. If no ingredients are provided, or if the ingredients are unclear, only return ai message.`
       },
       {
         'role': 'user',
@@ -46,7 +46,7 @@ async function generateRecipe(arrayOfIngredients) {
       },
       {
         "role": "user",
-        "content": `Tell me what well-known Filipino recipe I can make with these ingredients: ${ingredients}. Strictly return a JSON string that starts with '{' and ends with '}'. If no ingredients are given or the input is unclear, return a random Filipino recipe with all its details.`
+        "content": `Tell me what well-known Filipino recipe I can make with these ingredients: ${ingredients}. Strictly return a JSON string that starts with '{' and ends with '}'. If no ingredients are given or the input is unclear, return only ai_message.`
       }
     ],
     max_tokens: 500

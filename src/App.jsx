@@ -12,7 +12,7 @@ function App() {
 
   useEffect(() => {
     if (!result) return;
-    if (resultRef.current) {
+    if (resultRef.current != null) {
       resultRef.current.scrollIntoView({behavior: 'smooth'});
     }
   }, [result])
@@ -62,7 +62,7 @@ function App() {
                 <div>
                   <div className="mt-4 space-y-4">
                     {result.ai_message &&<div>
-                      <p className="text-xl">{result.ai_message}</p>
+                      <p className="text-xl">{result.ai_message || result.ai}</p>
                     </div>}
                     <div>
                       <h2 className="text-xl">Ingredients</h2>
@@ -102,7 +102,7 @@ function App() {
                 <div>
                   <div className="space-y-4">
                     {result.ai_message && <div>
-                      <p className="text-xl">{result.ai_message}</p>
+                      <p className="text-xl">{result.ai_message || result.ai}</p>
                     </div>}
                   </div>
                 </div>
