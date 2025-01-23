@@ -48,10 +48,27 @@ export default function RecipeGenerator({ setResult }) {
       const url = await postToServer(imgBlob);
       const ingredient = await scanImageUrl(url);
 
-      const id = nanoid();
-
-      setImages((prev) => [...prev, {'id': id, image_url: newUrl}]);
-      setIngredients((prev) => ([...prev, {'id': id, 'ingredient': ingredient}]));
+      // confirm the ingredient in the pic is correct.
+      MySwal.fire({
+          title: 'Ingredient Detected',
+          input: 'text',
+          inputPlaceholder: 'Type the correct ingredient',
+          inputValue: ingredient,
+          showCancelButton: true,
+          confirmButtonText: 'Confirm',
+          preConfirm: (value) => {
+              if (!value) {
+                  Swal.showValidationMessage('Please enter a valid ingredient!');
+              }
+              return value;
+          }
+      }).then((result) => {
+          if (result.isConfirmed) {
+            const id = nanoid();
+            setImages((prev) => [...prev, {'id': id, image_url: newUrl}]);
+            setIngredients((prev) => ([...prev, {'id': id, 'ingredient': ingredient}]));
+          } 
+      });
     })
   }
 
@@ -116,15 +133,27 @@ export default function RecipeGenerator({ setResult }) {
       return;
     }
 
-    let id = object.id;
 
-    setImages(prev => (
-      prev.filter(image => image.id !== id)
-    ))
+    Swal.fire({
+      title: "Delete the image?",
+      text: "You won't be able to recovert the deleted image!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success"
+        });
 
-    setIngredients(prev => (
-       prev.filter(ingredient => ingredient.id !== id)
-    ))
+        setImages(prev => prev.filter(image => image.id !== object.id))
+        setIngredients(prev => prev.filter(ingredient => ingredient.id !== object.id))
+      }
+    });
   }
 
   return (
@@ -152,7 +181,7 @@ export default function RecipeGenerator({ setResult }) {
           <div className="w-full gap-2 rounded-lg grid grid-cols-4">
             {
               images.map((image, index) => (
-                <div onClick={() => deleteIngredient(image)} className="aspect-square bg-white flex rounded overflow-hidden">
+                <div onClick={() => deleteIngredient(image)} className="cursor-pointer aspect-square bg-white flex rounded overflow-hidden">
                   <img src={image.image_url} alt={`captured-image-${index}`} className="flex-1"/>
                 </div>
               ))
