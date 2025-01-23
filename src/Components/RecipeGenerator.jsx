@@ -52,7 +52,7 @@ export default function RecipeGenerator({ setResult }) {
           title: 'Ingredient Detected',
           input: 'text',
           inputPlaceholder: 'Type the correct ingredient',
-          inputValue: ingredient,
+          inputValue: ingredient.replace(".", ""),
           showCancelButton: true,
           confirmButtonText: 'Confirm',
           preConfirm: (value) => {
@@ -65,7 +65,7 @@ export default function RecipeGenerator({ setResult }) {
           if (result.isConfirmed) {
             const id = nanoid();
             setImages((prev) => [...prev, {'id': id, image_url: newUrl}]);
-            setIngredients((prev) => ([...prev, {'id': id, 'ingredient': ingredient}]));
+            setIngredients((prev) => ([...prev, {'id': id, 'ingredient': result.value}]));
           } 
       });
     })

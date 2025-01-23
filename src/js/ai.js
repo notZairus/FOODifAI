@@ -37,20 +37,20 @@ async function scanImageUrl(imageUrl) {
 async function generateRecipe(arrayOfIngredients) {
   let ingredients = arrayOfIngredients.map(ingredient => ingredient.ingredient).join(", ");
 
+  console.log('sada');
+
   const chatCompletion = await client.chatCompletion({
-    model: "Qwen/Qwen2.5-72B-Instruct",
+    model: "mistralai/Mistral-Nemo-Instruct-2407",
+    
     messages: [
       {
         'role': 'system',
-        'content': `You are an assistant that suggests a well-known Filipino recipe based on a list of ingredients provided by the user. The recipe can include two additional ingredients the user didn’t mention. Always respond with a JSON string that starts with '{' and ends with '}'. Avoid any explanations or extra text outside the JSON string. If no ingredients are provided, or if the ingredients are unclear, only return ai message.`
-      },
-      {
-        'role': 'user',
-        'content': `"The structure of the JSON string you should return is as follows. Strictly adhere to this format: \n\n{\n  \"ai_message\": \"A brief message about the provided or missing ingredients.\",\n  \"is_ingredient\": true/false, \n  \"name\": \"Name of the Filipino recipe\",\n  \"ingredients\": [\n    \"List of ingredients, including user-provided and two additional ones if necessary\"\n  ],\n  \"steps\": [\n    \"Step-by-step instructions for the recipe\"\n  ],\n  \"nutrients_per_100g\": [\n    \"calories: X\",\n    \"carbohydrates: Xg\",\n    \"protein: Xg\",\n    \"fat: Xg\",\n    \"sodium: Xmg\",\n    \"potassium: Xmg\",\n    \"cholesterol: Xmg,\",\n   \"other nutrients: Xmg, ...]\n}\n\nRespond with the JSON string only."`
+        'content': `You are an assistant that suggests a well-known Filipino recipe based on a list of ingredients provided by the user you can exclude SOME of the given ingredient to be able to suggest a more common filipino ingredients. The recipe can include two additional ingredients the user didn’t mention. Always respond with a JSON string that starts with '{' and ends with '}'. Avoid any explanations or extra text outside the JSON string. If no ingredients are provided, or if the ingredients are unclear, only return ai message.
+                    The structure of the JSON string you should return is as follows. Strictly adhere to this format: \n\n{\n  \"ai_message\": \"A brief message about the provided or missing ingredients.\",\n  \"is_ingredient\": true/false, \n  \"name\": \"Name of the Filipino recipe\",\n  \"ingredients\": [\n    \"List of ingredients, including user-provided and two additional ones if necessary\"\n  ],\n  \"steps\": [\n    \"Step-by-step instructions for the recipe\"\n  ],\n  \"nutrients_per_100g\": [\n    \"calories: X\",\n    \"carbohydrates: Xg\",\n    \"protein: Xg\",\n    \"fat: Xg\",\n    \"sodium: Xmg\",\n    \"potassium: Xmg\",\n    \"cholesterol: Xmg,\"]\n}\n\nRespond with the JSON string only`
       },
       {
         "role": "user",
-        "content": `Tell me what well-known Filipino recipe I can make with these ingredients: ${ingredients}. Strictly return a JSON string that starts with '{' and ends with '}'. If no ingredients are given or the input is unclear, return only ai_message.`
+        "content": `Tell me what common Filipino recipe I can make with these ingredients: ${ingredients}. Strictly return a JSON string that starts with '{' and ends with '}'. If no ingredients are given or the input is unclear, return only ai_message.`
       }
     ],
     max_tokens: 500
