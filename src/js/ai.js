@@ -3,6 +3,9 @@ import { HfInference } from "@huggingface/inference";
 
 const client = new HfInference(import.meta.env.VITE_HF);
 
+
+//RecipeGenerator ======================================================================
+
 async function scanImageUrl(imageUrl) {
 
   const chatCompletion = await client.chatCompletion({
@@ -66,10 +69,57 @@ async function generateRecipe(arrayOfIngredients) {
   return chatCompletion.choices[0].message.content;
 }
 
+// =======================================================================================
 
+
+//FoodAnalysis ===========================================================================
+
+async function analyzeFood(imageUrl) {
+  const chatCompletion = await client.chatCompletion({
+    model: "meta-llama/Llama-3.2-11B-Vision-Instruct",
+    messages: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: `Analyze the food in the image and tell me the estimated nutrients of the food. You must return a json string, the structured of the JSON is the following: 
+                  "{
+                    "ai_message": String,
+                    "image_is_intelligible": Boolean,
+                    "there_is_a_food": Boolean,
+                    "name_of_food": String,
+                    "total_calorie": String,
+                    "nutrients": Array,
+                    "is_healthy": Boolean
+                  }"
+                .
+                STRICTLY All your messages/remarks should be on the "ai_message" key.
+                STRICTLY RETURN A JSON FILE
+                `
+          },
+          {
+            type: "image_url",
+            image_url: {
+              url: imageUrl
+            }
+          }
+        ]
+      }
+    ],
+    max_tokens: 500
+  });
+
+  console.log(chatCompletion.choices[0].message.content);
+  
+  return chatCompletion.choices[0].message.content;
+}
+
+// ==========================================================================================
 
 
 export {
   scanImageUrl,
-  generateRecipe
+  generateRecipe,
+  analyzeFood
 }

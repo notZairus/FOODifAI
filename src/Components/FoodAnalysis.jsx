@@ -1,20 +1,17 @@
 import CameraIcon from "../assets/icons/camera.svg";
 import { useState, useEffect, useRef } from "react";
-import { urlToImg, postToServer } from "../js/functions.js";
-import { scanImageUrl, generateRecipe } from "../js/ai.js";
-import { nanoid } from "nanoid";
+import { postToServer } from "../js/functions.js";
+import { analyzeFood } from "../js/ai.js";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
 
+const MySwal = withReactContent(Swal);
 
 
 export default function FoodAnalysis({ setResult }) {
   const [image, setImage] = useState(null);
   const vidRef = useRef(null);
-
-  const MySwal = withReactContent(Swal);
-  
 
   useEffect(() => {
     const openCamera = async () => {
@@ -28,8 +25,21 @@ export default function FoodAnalysis({ setResult }) {
     openCamera();
   }, []);
 
-  function captureImage() {
-    
+  function getAnalysis() {
+    let canvas = document.createElement('canvas');
+    canvas.width = vidRef.current.videoWidth;
+    canvas.height = vidRef.current.videoHeight;
+
+    let context = canvas.getContext('2d');
+    context.drawImage(vidRef.current, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob(async (blob) => {
+      console.log('sadasds')
+      let newImage = new File([blob], 'food.png', { type: 'image/png' });
+      //let url = await postToServer(newImage);
+      setResult(await analyzeFood("https://www.rotinrice.com/wp-content/uploads/2011/10/BeefBeanStew-3.jpg"));
+
+    })
   }
 
 
@@ -50,7 +60,7 @@ export default function FoodAnalysis({ setResult }) {
       </div>
 
       <div className="flex items-center justify-center mt-8">
-        <button onClick={captureImage} className="aspect-square w-16  bg-accent rounded-full flex items-center justify-center">
+        <button onClick={getAnalysis} className="aspect-square w-16  bg-accent rounded-full flex items-center justify-center">
           <img src={CameraIcon} alt="camera"  className="w-4/6"/>
         </button>
       </div>

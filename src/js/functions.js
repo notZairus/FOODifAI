@@ -1,6 +1,5 @@
 
 
-
 async function urlToImg(imgUrl) {
   const response = await fetch(imgUrl);
   const blob = await response.blob();

@@ -7,19 +7,13 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
 
-
+const MySwal = withReactContent(Swal);
 
 export default function RecipeGenerator({ setResult }) {
   const [images, setImages] = useState([]);
   const [ingredients, setIngredients] = useState([]);
   const vidRef = useRef(null);
 
-  const MySwal = withReactContent(Swal);
-
-  console.log(images);
-  console.log(ingredients);
-
-  
   useEffect(() => {
     const openCamera = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -33,7 +27,7 @@ export default function RecipeGenerator({ setResult }) {
   }, []);
 
 
-  function captureImage() {
+  function getIngredient() {
     let canvas = document.createElement('canvas');
     canvas.width = vidRef.current.videoWidth;
     canvas.height = vidRef.current.videoHeight;
@@ -43,9 +37,7 @@ export default function RecipeGenerator({ setResult }) {
 
     canvas.toBlob(async (blob) => {
       const newImg = new File([blob], "newImage.png", {type: 'image/png'});
-      const newUrl = URL.createObjectURL(newImg);
-      const imgBlob = await urlToImg(newUrl);
-      const url = await postToServer(imgBlob);
+      const url = await postToServer(newImg);
       const ingredientJson = JSON.parse(await scanImageUrl(url));
 
       if (ingredientJson.image_is_intelligible && ingredientJson.there_is_an_ingredient) {
@@ -89,42 +81,14 @@ export default function RecipeGenerator({ setResult }) {
     }
 
     try {
-
       let response = await generateRecipe(ingredients);
       let recipe = JSON.parse(response);
       setResult(recipe);
-
     } catch (error) {
       
       setResult({
-          "name": "Adobo",
           "ai_message": "You didn't give any ingredient.",
           "is_ingredient": false,
-          "ingredients": [
-            "1 kg Chicken or Beef",
-            "3 cloves of Garlic, 1 onion, 1 cup ofetta Tomato",
-            "1 teaspoon of Ground Black Pepper, 1 teaspoon of Salt, 2 bay leaves",
-            "2 tablespoons of Vinegar, 2 tablespoons of Soy Sauce, 1 tablespoon of Fish Sauce (optional)",
-            "2 tablespoons of Vegetable Oil"
-          ],
-          "steps": [
-            "Heat oil in a pan over medium heat",
-            "Sauté garlic and onions until softened",
-            "Add meat and cook until browned",
-            "Add tomato, pepper, salt, and bay leaves",
-            "Pour in vinegar, soy sauce, and fish sauce (if using)",
-            "Simmer for 30 minutes",
-            "Serve hot"
-          ],
-          "nutrients_per_100g": [
-            "calories: 250",
-            "carbohydrates: 20g",
-            "protein: 15g",
-            "fat: 10g",
-            "sodium: 500mg",
-            "potassium: 400mg",
-            "cholesterol: 20mg"
-          ]
         });
     }
   }
@@ -138,7 +102,6 @@ export default function RecipeGenerator({ setResult }) {
       });
       return;
     }
-
 
     Swal.fire({
       title: "Delete the image?",
@@ -177,7 +140,7 @@ export default function RecipeGenerator({ setResult }) {
         </video>
       </div>
       <div className="flex items-center justify-center mt-8">
-        <button onClick={captureImage} className="aspect-square w-16  bg-accent rounded-full flex items-center justify-center">
+        <button onClick={getIngredient} className="aspect-square w-16  bg-accent active:bg-accent/80 rounded-full flex items-center justify-center">
           <img src={CameraIcon} alt="camera"  className="w-4/6"/>
         </button>
       </div>
@@ -196,7 +159,7 @@ export default function RecipeGenerator({ setResult }) {
 
           <div className="w-full flex justify-center">
             <button 
-              className="bg-accent text-white px-8 py-4 text-xl rounded-full" 
+              className="bg-accent active:bg-accent/80 text-white px-8 py-4 text-xl rounded-full" 
               onClick={getRecipe}
             >
               Generate Recipe 
