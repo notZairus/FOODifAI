@@ -19,7 +19,7 @@ function App() {
 
   return (
     <>
-      <div className="lg:w-[480px] bg-accent/15 mx-auto w-screen min-h-screen py-8 px-9 font-mmo flex flex-col items-center">
+      <div className="lg:w-[480px] bg-accent/5 mx-auto w-screen min-h-screen py-8 px-9 font-mmo flex flex-col items-center">
         <h1 className="text-accent text-5xl text-center tracking-normal">FOODifAI</h1>
 
         <div className="w-full h-12 bg-accent/15 mt-8 rounded-full flex items-center tracking-wider text-lg">

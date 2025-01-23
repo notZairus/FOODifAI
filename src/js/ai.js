@@ -9,11 +9,15 @@ async function scanImageUrl(imageUrl) {
     model: "meta-llama/Llama-3.2-11B-Vision-Instruct",
     messages: [
       {
+        role: "system",
+        content: "You are an assistant that will strictly follow what the user want."
+      },
+      {
         role: "user",
         content: [
           {
             type: "text",
-            text: "Tell me what ingredients are in the image. respond 1 word"
+            text: "Tell me what ingredient is in the image. Your respond should only have 2 word max and it should never have a period('.') at the end of the sentence."
           },
           {
             type: "image_url",
@@ -31,7 +35,7 @@ async function scanImageUrl(imageUrl) {
 }
 
 async function generateRecipe(arrayOfIngredients) {
-  let ingredients = arrayOfIngredients.map(ingredient => ingredient.ingredient).join("").split(".").join(", ")
+  let ingredients = arrayOfIngredients.map(ingredient => ingredient.ingredient).join(", ");
 
   const chatCompletion = await client.chatCompletion({
     model: "Qwen/Qwen2.5-72B-Instruct",

@@ -48,7 +48,6 @@ export default function RecipeGenerator({ setResult }) {
       const url = await postToServer(imgBlob);
       const ingredient = await scanImageUrl(url);
 
-      // confirm the ingredient in the pic is correct.
       MySwal.fire({
           title: 'Ingredient Detected',
           input: 'text',
