@@ -39,7 +39,7 @@ export default function FoodAnalysis({ setResult }) {
       <div>
         <h2 className="text-accent mt-6 mb-1 text-center">Food Analysis</h2>
       </div>
-      <div className="aspect-square w-full">
+      <div className="p-2 aspect-square w-full border-4 border-accent/30 rounded-lg">
         <video 
           ref={vidRef}
           playsInline
