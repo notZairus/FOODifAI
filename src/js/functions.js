@@ -3,7 +3,6 @@
 async function urlToImg(imgUrl) {
   const response = await fetch(imgUrl);
   const blob = await response.blob();
-
   const imgFile = new File([blob], 'images.png', { type: 'image/png' })
   return imgFile;
 }
@@ -19,8 +18,6 @@ async function postToServer(imgBlob) {
   });
 
   let result = await response.json();
-
-  console.log(result);
   return result.data.url;
 }
 

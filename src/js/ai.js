@@ -38,10 +38,8 @@ async function scanImageUrl(imageUrl) {
     ],
     max_tokens: 500
   });
-
-  console.log(chatCompletion.choices[0].message.content);
   
-  return chatCompletion.choices[0].message.content;
+  return JSON.parse(chatCompletion.choices[0].message.content);
 }
 
 async function generateRecipe(arrayOfIngredients) {

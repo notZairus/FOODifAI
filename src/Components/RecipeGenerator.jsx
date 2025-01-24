@@ -1,6 +1,6 @@
 import CameraIcon from "../assets/icons/camera.svg";
 import { useState, useEffect, useRef } from "react";
-import { postToServer } from "../js/functions.js";
+import { postToServer, urlToImg } from "../js/functions.js";
 import { scanImageUrl, generateRecipe } from "../js/ai.js";
 import { nanoid } from "nanoid";
 import Swal from 'sweetalert2';
@@ -26,9 +26,8 @@ export default function RecipeGenerator({ setResult }) {
     openCamera();
   }, []);
 
-
   function getIngredient() {
-    let canvas = document.createElement('canvas');
+    const canvas = document.createElement('canvas');
     canvas.width = vidRef.current.videoWidth;
     canvas.height = vidRef.current.videoHeight;
 
@@ -37,66 +36,87 @@ export default function RecipeGenerator({ setResult }) {
 
     canvas.toBlob(async (blob) => {
 
-      const newImg = new File([blob], "newImage.png", {type: 'image/png'});
-      const url = await postToServer(newImg);
-      
+      //prompt the confirmation for the taken image
       MySwal.fire({
         title: "Confirm Image? ",
         showCancelButton: true,
         confirmButtonText: "Confirm",
         showLoaderOnConfirm: true,
         preConfirm: async () => {
-          try {
-            const ingredientJson = JSON.parse(await scanImageUrl(url));
-            return ingredientJson;
-          } catch (error) {
-            MySwal.showValidationMessage(`
-              Request failed: ${error}
-            `);
-          }
-        },
-        allowOutsideClick: () => !MySwal.isLoading()
-      }).then((result) => {
-        if (result.isConfirmed) {
-          console.log(result.value);
-          validateIngredient(result.value);
-        } else {
-          console.log("denied");
-        }
-      });
+          // if confirmed....
 
-      function validateIngredient(ingredientJson) {
-        if (ingredientJson.image_is_intelligible && ingredientJson.there_is_an_ingredient) {
-          MySwal.fire({
-            title: 'Ingredient Detected',
-            imageUrl: url,
-            imageWidth: 150,
-            imageHeight: 150,
-            input: 'text',
-            inputPlaceholder: 'Type the correct ingredient',
-            inputValue: ingredientJson.ingredient.replace(".", ""),
-            showCancelButton: true,
-            confirmButtonText: 'Confirm',
-            preConfirm: (value) => {
-                if (!value) {
-                    Swal.showValidationMessage('Please enter a valid ingredient!');
+          // get an img file using the canvas/context
+          let imgFile = new File([blob], "takenImg.png", { type: 'image/png' });
+          console.log(imgFile);
+
+          // upload the img to the server
+          let imgUrl = await postToServer(imgFile);
+          console.log(imgUrl);
+
+          // make ai get the ingredient in the image
+          try {
+            
+            let ingredientJson = await scanImageUrl(imgUrl);
+            console.log(ingredientJson);
+
+            //if (ingredientJson.image_is_intelligible && ingredientJson.there_is_an_ingredient) {
+              MySwal.fire({
+                title: 'Ingredient Detected',
+                text: 'If the ingredient I detected is incorrect, you can correct it using the textbox below.',
+                imageUrl: imgUrl,
+                imageWidth: 150,
+                imageHeight: 150,
+                inputLabel: 'Ingredient Name: ',
+                input: 'text',
+                inputValue: ingredientJson.ingredient,
+                inputPlaceholder: 'Mango',
+                showCancelButton: true,
+                confirmButtonText: 'Confirm',
+                preConfirm: (value) => {
+                    if (!value) {
+                        Swal.showValidationMessage('Please enter a valid ingredient!');
+                    }
+                    return value;
                 }
-                return value;
-            }
-          }).then((result) => {
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  const id = nanoid();
+                  setImages((prev) => [...prev, {'id': id, image_url: imgUrl}]);
+                  setIngredients((prev) => ([...prev, {'id': id, 'ingredient': result.value}]));
+                } 
+              })
+            //}
+
+          } catch (error) {
+
+            MySwal.fire({
+              title: 'Ingredient Undetected',
+              text: 'You can choose to input the name ingredient in the input below.',
+              imageUrl: imgUrl,
+              imageWidth: 150,
+              imageHeight: 150,
+              inputLabel: 'Ingredient Name: ',
+              input: 'text',
+              inputPlaceholder: 'Mango',
+              showCancelButton: true,
+              confirmButtonText: 'Confirm',
+              preConfirm: (value) => {
+                  if (!value) {
+                      Swal.showValidationMessage('Please enter a valid ingredient!');
+                  }
+                  return value;
+              }
+            }).then((result) => {
               if (result.isConfirmed) {
                 const id = nanoid();
-                setImages((prev) => [...prev, {'id': id, image_url: url}]);
+                setImages((prev) => [...prev, {'id': id, image_url: imgUrl}]);
                 setIngredients((prev) => ([...prev, {'id': id, 'ingredient': result.value}]));
               } 
-          });
-        } else {
-          MySwal.fire({
-            title: "Ingredient Undetected.",
-            icon: "error",
-          });
+            })
+
+          }
         }
-      }
+      })
     })
   }
 
