@@ -26,6 +26,8 @@ export default function RecipeGenerator({ setResult }) {
     openCamera();
   }, []);
 
+
+
   function getIngredient() {
     const canvas = document.createElement('canvas');
     canvas.width = vidRef.current.videoWidth;
@@ -59,7 +61,7 @@ export default function RecipeGenerator({ setResult }) {
             let ingredientJson = await scanImageUrl(imgUrl);
             console.log(ingredientJson);
 
-            //if (ingredientJson.image_is_intelligible && ingredientJson.there_is_an_ingredient) {
+            if (ingredientJson.image_is_intelligible && ingredientJson.there_is_an_ingredient) {
               MySwal.fire({
                 title: 'Ingredient Detected',
                 text: 'If the ingredient I detected is incorrect, you can correct it using the textbox below.',
@@ -85,7 +87,7 @@ export default function RecipeGenerator({ setResult }) {
                   setIngredients((prev) => ([...prev, {'id': id, 'ingredient': result.value}]));
                 } 
               })
-            //}
+            }
 
           } catch (error) {
 
@@ -174,8 +176,6 @@ export default function RecipeGenerator({ setResult }) {
       }
     });
   }
-
-
 
 
 
