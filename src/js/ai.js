@@ -1,4 +1,5 @@
 import { HfInference } from "@huggingface/inference";
+import { extractJson } from "./functions";
 
 
 const client = new HfInference(import.meta.env.VITE_HF);
@@ -7,7 +8,6 @@ const client = new HfInference(import.meta.env.VITE_HF);
 //RecipeGenerator ======================================================================
 
 async function scanImageUrl(imageUrl) {
-
   const chatCompletion = await client.chatCompletion({
     model: "meta-llama/Llama-3.2-11B-Vision-Instruct",
     messages: [
@@ -38,8 +38,7 @@ async function scanImageUrl(imageUrl) {
     ],
     max_tokens: 500
   });
-  
-  return JSON.parse(chatCompletion.choices[0].message.content);
+  return extractJson(chatCompletion.choices[0].message.content);
 }
 
 async function generateRecipe(arrayOfIngredients) {
@@ -47,12 +46,32 @@ async function generateRecipe(arrayOfIngredients) {
 
   const chatCompletion = await client.chatCompletion({
     model: "mistralai/Mistral-Nemo-Instruct-2407",
-    
     messages: [
       {
-        'role': 'system',
-        'content': `You are an assistant that suggests a well-known Filipino recipe based on a list of ingredients provided by the user you can exclude SOME of the given ingredient to be able to suggest a more common filipino ingredients. The recipe can include two additional ingredients the user didn’t mention. Always respond with a JSON string that starts with '{' and ends with '}'. Avoid any explanations or extra text outside the JSON string. If no ingredients are provided, or if the ingredients are unclear, only return ai message.
-                    The structure of the JSON string you should return is as follows. Strictly adhere to this format: \n\n{\n  \"ai_message\": \"A brief message about the provided or missing ingredients.\",\n  \"is_ingredient\": true/false, \n  \"name\": \"Name of the Filipino recipe\",\n  \"ingredients\": [\n    \"List of ingredients, including user-provided and two additional ones if necessary\"\n  ],\n  \"steps\": [\n    \"Step-by-step instructions for the recipe\"\n  ],\n  \"nutrients_per_100g\": [\n    \"calories: X\",\n    \"carbohydrates: Xg\",\n    \"protein: Xg\",\n    \"fat: Xg\",\n    \"sodium: Xmg\",\n    \"potassium: Xmg\",\n    \"cholesterol: Xmg,\"]\n}\n\nRespond with the JSON string only`
+        "role": "system",
+        "content": "You are an assistant that suggests a well-known Filipino recipe based on the ingredients provided by the user. You can exclude some of the user's ingredients if they don't fit the recipe and replace them with more common Filipino ingredients. You may also add up to two additional ingredients not mentioned by the user to complete the recipe. Always respond with a valid JSON string that strictly adheres to the following structure: \
+                    { \
+                      \"ai_message\": \"A brief message about the provided or missing ingredients.\", \
+                      \"is_ingredient\": true/false, \
+                      \"name\": \"Name of the Filipino recipe\", \
+                      \"ingredients\": [ \
+                        \"List of ingredients, including user-provided and adjusted ones if necessary\" \
+                      ], \
+                      \"steps\": [ \
+                        \"Step-by-step instructions for the recipe\" \
+                      ], \
+                      \"nutrients_per_100g\": [ \
+                        \"calories: X\", \
+                        \"carbohydrates: Xg\", \
+                        \"protein: Xg\", \
+                        \"fat: Xg\", \
+                        \"sodium: Xmg\", \
+                        \"potassium: Xmg\", \
+                        \"cholesterol: Xmg\" \
+                      ] \
+                    } \
+                    \
+                    If no ingredients are provided, or the ingredients are unclear, only return an \"ai_message\" key with a message and set \"is_ingredient\" to false. Strictly follow the JSON format above in every response."
       },
       {
         "role": "user",
@@ -61,10 +80,7 @@ async function generateRecipe(arrayOfIngredients) {
     ],
     max_tokens: 500
   });
-
-  console.log(chatCompletion.choices[0].message.content)
-  
-  return chatCompletion.choices[0].message.content;
+  return extractJson(chatCompletion.choices[0].message.content);
 }
 
 // =======================================================================================
@@ -81,20 +97,21 @@ async function analyzeFood(imageUrl) {
         content: [
           {
             type: "text",
-            text: `Analyze the food in the image and tell me the estimated nutrients of the food. You must return a json string, the structured of the JSON is the following: 
-                  "{
-                    "ai_message": String,
-                    "image_is_intelligible": Boolean,
-                    "there_is_a_food": Boolean,
-                    "name_of_food": String,
-                    "total_calorie": String,
-                    "nutrients": Array,
-                    "is_healthy": Boolean
-                  }"
-                .
-                STRICTLY All your messages/remarks should be on the "ai_message" key.
-                STRICTLY RETURN A JSON FILE
-                `
+            text: `return a VALID JSON STRING with the following structure: \
+                  { \
+                    \"ai_message\": String, \
+                    \"image_is_intelligible\": Boolean, \
+                    \"there_is_a_food\": Boolean, \
+                    \"name_of_food\": String, \
+                    \"total_calorie\": String, \
+                    \"nutrients\": Array, \
+                    \"is_healthy\": Boolean \
+                  }. \
+                  ENSURE: \
+                  1. ALL responses, explanations, or remarks are included ONLY in the \"ai_message\" key. \
+                  2. The \"nutrients\" key must contain an array of objects, where each object has \"name\" (e.g., 'protein') and \"amount\" (e.g., '35g'). \
+                  3. The response is ALWAYS a valid JSON string. \
+                  4. STRICTLY No additional text outside the JSON structure is returned.`
           },
           {
             type: "image_url",
@@ -107,10 +124,7 @@ async function analyzeFood(imageUrl) {
     ],
     max_tokens: 500
   });
-
-  console.log(chatCompletion.choices[0].message.content);
-  
-  return chatCompletion.choices[0].message.content;
+  return extractJson(chatCompletion.choices[0].message.content);
 }
 
 // ==========================================================================================

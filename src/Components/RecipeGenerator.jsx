@@ -26,8 +26,6 @@ export default function RecipeGenerator({ setResult }) {
     openCamera();
   }, []);
 
-
-
   function getIngredient() {
     const canvas = document.createElement('canvas');
     canvas.width = vidRef.current.videoWidth;
@@ -127,12 +125,12 @@ export default function RecipeGenerator({ setResult }) {
 
   async function getRecipe() {
     try {
-      let response = await generateRecipe(ingredients);
-      let recipe = JSON.parse(response);
+      let recipe = await generateRecipe(ingredients);
+      console.log(recipe);
       setResult(recipe);
     } catch (error) {
       setResult({
-        "ai_message": "You didn't give any ingredient.",
+        "ai_message": "You didn't give enough ingredient.",
         "is_ingredient": false,
       });
     }
@@ -140,13 +138,13 @@ export default function RecipeGenerator({ setResult }) {
 
   function deleteIngredient(object) {
     Swal.fire({
-      title: "Delete the image?",
-      text: "You won't be able to recovert the deleted image!",
+      title: "Remove ingredient?",
+      text: object.ingredient,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!"
+      confirmButtonText: "Yes, remove it!"
     }).then((result) => {
       if (result.isConfirmed) {
         Swal.fire({
@@ -175,7 +173,7 @@ export default function RecipeGenerator({ setResult }) {
         </video>
       </div>
       <div className="flex items-center justify-center mt-8">
-        <button onClick={getIngredient} className="aspect-square w-16  bg-accent active:bg-accent/80 rounded-full flex items-center justify-center">
+        <button onClick={getIngredient} className="aspect-square w-16 bg-accent active:bg-accent/80 rounded-full flex items-center justify-center">
           <img src={CameraIcon} alt="camera"  className="w-4/6"/>
         </button>
       </div>
@@ -192,14 +190,16 @@ export default function RecipeGenerator({ setResult }) {
             }
           </div>
 
-          <div className="w-full flex justify-center">
-            <button 
-              className="bg-accent active:bg-accent/80 text-white px-8 py-4 text-xl rounded-full" 
-              onClick={getRecipe}
-            >
-              Generate Recipe 
-            </button>
-          </div>
+          {ingredients.length > 3 && 
+            <div className="w-full flex justify-center">
+              <button 
+                className="bg-accent active:bg-accent/80 text-white px-8 py-4 text-xl rounded-full" 
+                onClick={getRecipe}
+              >
+                Generate Recipe 
+              </button>
+            </div>
+          }
 
         </div>
       }

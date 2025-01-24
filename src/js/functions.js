@@ -21,9 +21,15 @@ async function postToServer(imgBlob) {
   return result.data.url;
 }
 
+function extractJson(jsonString) {
+  let extractedJsonString = jsonString.slice(jsonString.indexOf('{'), jsonString.lastIndexOf("}") + 1);
+  return JSON.parse(extractedJsonString);
+}
+
 
 
 export {
   urlToImg,
   postToServer,
+  extractJson
 }
