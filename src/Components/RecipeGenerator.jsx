@@ -45,7 +45,7 @@ export default function RecipeGenerator({ setResult }) {
         showCancelButton: true,
         confirmButtonText: "Confirm",
         showLoaderOnConfirm: true,
-        preConfirm: async (login) => {
+        preConfirm: async () => {
           try {
             const ingredientJson = JSON.parse(await scanImageUrl(url));
             return ingredientJson;
@@ -58,6 +58,7 @@ export default function RecipeGenerator({ setResult }) {
         allowOutsideClick: () => !MySwal.isLoading()
       }).then((result) => {
         if (result.isConfirmed) {
+          console.log(result.value);
           validateIngredient(result.value);
         } else {
           console.log("denied");
