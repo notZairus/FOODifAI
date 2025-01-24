@@ -17,14 +17,14 @@ async function scanImageUrl(imageUrl) {
           {
             type: "text",
             text: `Analyze and tell me what ingredient is in the image. You strictly need to respond with a JSON string starting with '{' and ends with '}' the json structure is as follows 
-                  {
+                  "{
                     "ai_message": string,
                     "image_is_intelligible": boolean,
                     "there_is_an_ingredient": boolean,
                     "ingredient": string
-                  }
+                  }"
                 .
-                All your messages/remarks should be on the "ai_message" key.
+                All your messages/remarks must be on the "ai_message" key. So that you will surely return a JSON string.
                 `
           },
           {
