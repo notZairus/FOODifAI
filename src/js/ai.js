@@ -1,56 +1,18 @@
 import { HfInference } from "@huggingface/inference";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { extractJson } from "./functions";
 
 
-const client = new HfInference(import.meta.env.VITE_HF);
+export async function generateRecipe(arrayOfIngredients) {
+  console.log('generating recipe...');
+  const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_KEY);
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-
-//RecipeGenerator ======================================================================
-
-async function scanImageUrl(imageUrl) {
-  const chatCompletion = await client.chatCompletion({
-    model: "meta-llama/Llama-3.2-11B-Vision-Instruct",
-    messages: [
-      {
-        role: "user",
-        content: [
-          {
-            type: "text",
-            text: `Analyze and tell me what ingredient is in the image. You STRICTLY need to respond with a JSON string starting with '{' and ends with '}' the json structure is: 
-                  "{
-                    "ai_message": string,
-                    "image_is_intelligible": boolean,
-                    "there_is_an_ingredient": boolean,
-                    "ingredient": string
-                  }"
-                .
-                All your messages,remarks, and notes MUST be in the "ai_message" key. So that you will surely return a JSON string.
-                `
-          },
-          {
-            type: "image_url",
-            image_url: {
-              url: imageUrl
-            }
-          }
-        ]
-      }
-    ],
-    max_tokens: 500
-  });
-  return extractJson(chatCompletion.choices[0].message.content);
-}
-
-async function generateRecipe(arrayOfIngredients) {
   let ingredients = arrayOfIngredients.map(ingredient => ingredient.ingredient).join(", ");
 
-  const chatCompletion = await client.chatCompletion({
-    model: "mistralai/Mistral-Nemo-Instruct-2407",
-    messages: [
-      {
-        "role": "system",
-        "content": "You are an assistant that suggests a well-known Filipino recipe based on the ingredients provided by the user. You can exclude some of the user's ingredients if they don't fit the recipe and replace them with more common Filipino ingredients. You may also add up to two additional ingredients not mentioned by the user to complete the recipe. Always respond with a valid JSON string that strictly adheres to the following structure: \
-                    { \
+  let prompt = `Tell me what common Filipino recipe I can make with these ingredients: ${ingredients}.
+                Strictly return a json structure with this structure:
+                  { \
                       \"ai_message\": \"A brief message about the provided or missing ingredients.\", \
                       \"is_ingredient\": true/false, \
                       \"name\": \"Name of the Filipino recipe\", \
@@ -69,68 +31,37 @@ async function generateRecipe(arrayOfIngredients) {
                         \"potassium: Xmg\", \
                         \"cholesterol: Xmg\" \
                       ] \
-                    } \
-                    \
-                    If no ingredients are provided, or the ingredients are unclear, only return an \"ai_message\" key with a message and set \"is_ingredient\" to false. Strictly follow the JSON format above in every response."
-      },
-      {
-        "role": "user",
-        "content": `Tell me what common Filipino recipe I can make with these ingredients: ${ingredients}. Strictly return a JSON string that starts with '{' and ends with '}'. If no ingredients are given or the input is unclear, return only ai_message.`
-      }
-    ],
-    max_tokens: 500
-  });
-  return extractJson(chatCompletion.choices[0].message.content);
+                    }
+                `
+
+  const result = await model.generateContent(prompt);
+  return extractJson(result.response.text());
 }
 
-// =======================================================================================
+export async function processImage(file, prompt) {
+  const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_KEY);
+  const model = genAI.getGenerativeModel({ model: 'models/gemini-1.5-pro' });
 
+  const base64Data = await convertFileToBase64(file);
 
-//FoodAnalysis ===========================================================================
-
-async function analyzeFood(imageUrl) {
-  const chatCompletion = await client.chatCompletion({
-    model: "meta-llama/Llama-3.2-11B-Vision-Instruct",
-    messages: [
+  const result = await model.generateContent([
       {
-        role: "user",
-        content: [
-          {
-            type: "text",
-            text: `Analyze the image and tell me the estimate nutrient of the FOOD in the image. Return a VALID JSON STRING with the following structure: \
-                  { \
-                    \"ai_message\": String, \
-                    \"image_is_intelligible\": Boolean, \
-                    \"there_is_a_food\": Boolean, \
-                    \"name_of_food\": String, \
-                    \"total_calorie\": String, \
-                    \"nutrients\": Array, \
-                    \"is_healthy\": Boolean \
-                  }. \
-                  ENSURE: \
-                  1. The \"nutrients\" key must contain an array of objects, where each object has \"name\" (e.g., 'protein') and \"amount\" (e.g., '35g'). \
-                  2. The response is ALWAYS a valid JSON string.`
+          inlineData: {
+              data: base64Data.split(",")[1],
+              mimeType: "image/jpeg",
           },
-          {
-            type: "image_url",
-            image_url: {
-              url: imageUrl
-            }
-          }
-        ]
-      }
-    ],
-    max_tokens: 500
-  });
-  console.log(chatCompletion.choices[0].message.content);
-  return extractJson(chatCompletion.choices[0].message.content);
+      },
+      prompt
+  ]);
+
+  return result.response.text();
 }
 
-// ==========================================================================================
-
-
-export {
-  scanImageUrl,
-  generateRecipe,
-  analyzeFood
+function convertFileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }

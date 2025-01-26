@@ -1,9 +1,9 @@
 import CameraIcon from "../assets/icons/camera.svg";
-import { useState, useEffect, useRef } from "react";
-import { postToServer } from "../js/functions.js";
-import { analyzeFood } from "../js/ai.js";
+import { useEffect, useRef } from "react";
+import { processImage } from "../js/ai.js";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { extractJson } from "../js/functions.js";
 
 
 const MySwal = withReactContent(Swal);
@@ -33,7 +33,6 @@ export default function FoodAnalysis({ setResult }) {
     context.drawImage(vidRef.current, 0, 0, canvas.width, canvas.height);
 
     canvas.toBlob(async (blob) => {
-
       const previewImageUrl = URL.createObjectURL(blob);
 
       MySwal.fire({
@@ -47,13 +46,26 @@ export default function FoodAnalysis({ setResult }) {
         preConfirm: async () => {
           try {
             let newImage = new File([blob], 'food.png', { type: 'image/png' });
-            let url = await postToServer(newImage); 
-            let result = await analyzeFood(url);
-            setResult(result);
+            let result = await processImage(newImage, `
+              Analyze the image and tell me the estimate nutrient of the FOOD in the image. Return a VALID JSON STRING with the following structure: \
+                { \
+                  \"ai_message\": String, \
+                  \"image_is_intelligible\": Boolean, \
+                  \"there_is_a_food\": Boolean, \
+                  \"name_of_food\": String, \
+                  \"total_calorie\": String, \
+                  \"nutrients\": Array, \
+                  \"is_healthy\": Boolean \
+                }. \
+              ENSURE: \
+              1. The \"nutrients\" key must contain an array of objects, where each object has \"name\" (e.g., 'protein') and \"amount\" (e.g., '35g'). \
+              2. The response is ALWAYS a valid JSON string.
+            `);
+            setResult(extractJson(result));
           } catch(error) {
             MySwal.fire({
               title: 'Food Undetected',
-              text: 'You can choose to input the name ingredient in the input below.',
+              text: 'Ensure that the image is clear and well lit.',
               confirmButtonText: 'Close',
               icon: 'error'
             })

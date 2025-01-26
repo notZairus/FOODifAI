@@ -1,7 +1,7 @@
 import CameraIcon from "../assets/icons/camera.svg";
 import { useState, useEffect, useRef } from "react";
-import { postToServer, urlToImg } from "../js/functions.js";
-import { scanImageUrl, generateRecipe } from "../js/ai.js";
+import { extractJson } from "../js/functions.js";
+import { generateRecipe, processImage } from "../js/ai.js";
 import { nanoid } from "nanoid";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -35,13 +35,12 @@ export default function RecipeGenerator({ setResult }) {
     context.drawImage(vidRef.current, 0, 0, canvas.width, canvas.height);
 
     canvas.toBlob(async (blob) => {
-
-      const previewImageUrl = URL.createObjectURL(blob);
+      const __image_url = URL.createObjectURL(blob);
 
       //prompt the confirmation for the taken image
       MySwal.fire({
         title: "Confirm Image? ",
-        imageUrl: previewImageUrl,
+        imageUrl: __image_url,
         imageWidth: 150,
         imageHeight: 150,
         showCancelButton: true,
@@ -52,25 +51,34 @@ export default function RecipeGenerator({ setResult }) {
 
           // get an img file using the canvas/context
           let imgFile = new File([blob], "takenImg.png", { type: 'image/png' });
-          console.log(imgFile);
 
-          // upload the img to the server
-          let imgUrl = await postToServer(imgFile);
-          console.log(imgUrl);
+          // prompt the ai to process the image
+          let result = await processImage(imgFile, `
+            Analyze and tell me what ingredient is in the image. You STRICTLY need to respond with a JSON string starting with '{' and ends with '}' the json structure is: 
+              "{
+                "ai_message": string,
+                "image_is_intelligible": boolean,
+                "there_is_an_ingredient": boolean,
+                "ingredient": string
+              }"
+            .
+            All your messages,remarks, and notes MUST be in the "ai_message" key. So that you will surely return a JSON string.
+          `);
+
+          let ingredient = extractJson(result);
 
           // make ai get the ingredient in the image
           try {
-            let ingredientJson = await scanImageUrl(imgUrl);
-            console.log(ingredientJson);
-            ingredientDetected(ingredientJson, imgUrl)
+            ingredientDetected(ingredient, __image_url)
           } catch (error) {
-            noIngredientDetected(imgUrl);
+            noIngredientDetected(__image_url);
           }
         }
       })
     });
 
     function ingredientDetected(ingredientJson, imgUrl) {
+      console.log(ingredientJson);
       if (ingredientJson.image_is_intelligible && ingredientJson.there_is_an_ingredient) {
         MySwal.fire({
           title: 'Ingredient Found',
