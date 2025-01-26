@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
-import RecipeGenerator from "./Components/RecipeGenerator.jsx";
-import FoodAnalysis from "./Components/FoodAnalysis.jsx";
+import { useState, useEffect, useRef, lazy, Suspense } from "react";
+
+const RecipeGenerator = lazy(() => import("./Components/RecipeGenerator.jsx"))
+const FoodAnalysis = lazy(() => import("./Components/FoodAnalysis.jsx"))
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
       resultRef.current.scrollIntoView({behavior: 'smooth'});
     }
   }, [result])
+  
 
   return (
     <>
@@ -46,16 +48,19 @@ function App() {
         </div>
 
         <main>
-  
+
           <section className="mb-12">
-            { 
-              mode == "RecipeGenerator" 
-                ? <RecipeGenerator setResult={setResult}/>
-                : <FoodAnalysis setResult={setResult}/>
-            }
+            <Suspense>
+              { 
+                mode == "RecipeGenerator" 
+                  ? <RecipeGenerator setResult={setResult}/>
+                  : <FoodAnalysis setResult={setResult}/>
+              }
+            </Suspense>
+           
           </section>
 
-          {result && mode == "RecipeGenerator" ? (
+          {result && (
             result.is_ingredient ? (
               <section className="text-justify bg-accent shadow-md rounded-lg mb-12 text-white/90 p-4">
                 <h1 className="text-3xl" ref={resultRef}>{result.name}</h1>
@@ -66,7 +71,7 @@ function App() {
                     </div>}
                     <div>
                       <h2 className="text-xl">Ingredients</h2>
-                      <ul className="tracking-wider list-disc list-inside">
+                      <ul className="tracking-wider list-disc list-inside ml-4">
                         {
                           result.ingredients.map(ingredient => (
                             <li>{ingredient}</li>
@@ -76,7 +81,7 @@ function App() {
                     </div>
                     <div>
                       <h2 className="text-xl">Steps</h2>
-                      <ul className="tracking-wider list-decimal list-inside">
+                      <ul className="tracking-wider list-decimal list-inside ml-4">
                       {
                           result.steps.map(step => (
                             <li>{step}</li>
@@ -86,7 +91,7 @@ function App() {
                     </div>
                     <div>
                       <h2 className="text-xl">Nutrients per 100g</h2>
-                      <ul className="tracking-wider list-disc list-inside">
+                      <ul className="tracking-wider list-disc list-inside ml-4">
                       {
                           result.nutrients_per_100g.map(nutrient => (
                             <li>{nutrient}</li>
@@ -94,6 +99,34 @@ function App() {
                         }
                       </ul>
                     </div>
+                  </div>
+                </div>
+              </section>
+            ) : result.there_is_a_food && result.image_is_intelligible ? (
+              <section className="text-justify bg-accent shadow-md rounded-lg mb-12 text-white/90 p-4">
+                <h1 className="text-3xl" ref={resultRef}>{result.name_of_food} ({result.is_healthy ? 'Healthy' : 'Unhealthy'})</h1>
+                <div>
+                  <div className="mt-4 space-y-4">
+                    {result.ai_message && <div>
+                      <p className="text-xl">{result.ai_message || result.ai}</p>
+                    </div>}
+
+                    <div>
+                      <h2 className="text-xl">Calorie Count</h2>
+                      <p className="ml-4">{result.total_calorie}</p>
+                    </div>
+                    
+                    <div>
+                      <h2 className="text-xl">Nutrients</h2>
+                      <ul className="tracking-wider list-disc list-inside ml-4">
+                        {
+                          result.nutrients.map(nutrient => (
+                            <li>{nutrient.name}: {nutrient.amount}</li>
+                          ))
+                        }
+                      </ul>
+                    </div>
+
                   </div>
                 </div>
               </section>
@@ -108,8 +141,8 @@ function App() {
                 </div>
               </section>
             )
-          ) : null}
-
+          )}
+          
         </main> 
       </div>
     </>

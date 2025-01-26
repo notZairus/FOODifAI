@@ -97,7 +97,7 @@ async function analyzeFood(imageUrl) {
         content: [
           {
             type: "text",
-            text: `return a VALID JSON STRING with the following structure: \
+            text: `Analyze and tell me the estimate nutrient of the FOOD in the image. Return a VALID JSON STRING with the following structure: \
                   { \
                     \"ai_message\": String, \
                     \"image_is_intelligible\": Boolean, \
@@ -111,7 +111,8 @@ async function analyzeFood(imageUrl) {
                   1. ALL responses, explanations, or remarks are included ONLY in the \"ai_message\" key. \
                   2. The \"nutrients\" key must contain an array of objects, where each object has \"name\" (e.g., 'protein') and \"amount\" (e.g., '35g'). \
                   3. The response is ALWAYS a valid JSON string. \
-                  4. STRICTLY No additional text outside the JSON structure is returned.`
+                  4. STRICTLY No additional text outside the JSON structure is returned.
+                  5.ALWAYS RETURN A JSON STRING`
           },
           {
             type: "image_url",
@@ -124,6 +125,7 @@ async function analyzeFood(imageUrl) {
     ],
     max_tokens: 500
   });
+  console.log(chatCompletion.choices[0].message.content);
   return extractJson(chatCompletion.choices[0].message.content);
 }
 

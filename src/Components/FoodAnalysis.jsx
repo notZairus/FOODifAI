@@ -34,8 +34,8 @@ export default function FoodAnalysis({ setResult }) {
 
     canvas.toBlob(async (blob) => {
       let newImage = new File([blob], 'food.png', { type: 'image/png' });
-      //let url = await postToServer(newImage);
-      let result = await analyzeFood('https://assets.unileversolutions.com/recipes-v2/214408.png');
+      let url = await postToServer(newImage);
+      let result = await analyzeFood(url);
       setResult(result);
     })
   }
@@ -43,7 +43,6 @@ export default function FoodAnalysis({ setResult }) {
 
   return (
     <>
-
       <div>
         <h2 className="text-accent mt-6 mb-1 text-center">Food Analysis</h2>
       </div>
