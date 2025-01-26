@@ -134,7 +134,7 @@ function App() {
               <div>
                 <div className="space-y-4">
                   {result.ai_message && <div>
-                    <p className="text-xl">{result.ai_message || result.ai}</p>
+                    <p className="text-xl" ref={resultRef}>{result.ai_message || result.ai}</p>
                   </div>}
                 </div>
               </div>
