@@ -36,9 +36,14 @@ export default function RecipeGenerator({ setResult }) {
 
     canvas.toBlob(async (blob) => {
 
+      const previewImageUrl = URL.createObjectURL(blob);
+
       //prompt the confirmation for the taken image
       MySwal.fire({
         title: "Confirm Image? ",
+        imageUrl: previewImageUrl,
+        imageWidth: 150,
+        imageHeight: 150,
         showCancelButton: true,
         confirmButtonText: "Confirm",
         showLoaderOnConfirm: true,

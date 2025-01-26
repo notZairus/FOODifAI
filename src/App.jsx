@@ -8,7 +8,7 @@ function App() {
   const [mode, setMode] = useState("RecipeGenerator");
   const [result, setResult] = useState(null);
   const resultRef = useRef(null);
-
+  
   console.log(result);
 
   useEffect(() => {
