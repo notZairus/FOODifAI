@@ -33,14 +33,34 @@ export default function FoodAnalysis({ setResult }) {
     context.drawImage(vidRef.current, 0, 0, canvas.width, canvas.height);
 
     canvas.toBlob(async (blob) => {
-      try {
-        let newImage = new File([blob], 'food.png', { type: 'image/png' });
-        let url = await postToServer(newImage); 
-        let result = await analyzeFood("https://curiousflavors.com/wp-content/uploads/2023/09/Untitled-design-2023-09-21T141726.597.jpg");
-        setResult(result);
-      } catch(error) {
-        alert('yeeet');
-      }
+
+      const previewImageUrl = URL.createObjectURL(blob);
+
+      MySwal.fire({
+        title: "Confirm Image? ",
+        imageUrl: previewImageUrl,
+        imageWidth: 150,
+        imageHeight: 150,
+        showCancelButton: true,
+        confirmButtonText: "Confirm",
+        showLoaderOnConfirm: true,
+        preConfirm: async () => {
+          try {
+            let newImage = new File([blob], 'food.png', { type: 'image/png' });
+            let url = await postToServer(newImage); 
+            let result = await analyzeFood(url);
+            setResult(result);
+          } catch(error) {
+            MySwal.fire({
+              title: 'Food Undetected',
+              text: 'You can choose to input the name ingredient in the input below.',
+              confirmButtonText: 'Close',
+              icon: 'error'
+            })
+          }
+      
+        },
+      });
     })
   }
 

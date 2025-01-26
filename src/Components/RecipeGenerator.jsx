@@ -73,8 +73,8 @@ export default function RecipeGenerator({ setResult }) {
     function ingredientDetected(ingredientJson, imgUrl) {
       if (ingredientJson.image_is_intelligible && ingredientJson.there_is_an_ingredient) {
         MySwal.fire({
-          title: 'Ingredient Detected',
-          text: 'If the ingredient I detected is incorrect, you can correct it using the textbox below.',
+          title: 'Ingredient Found',
+          text: 'If the detected ingredient is incorrect, you can update it using the textbox below',
           imageUrl: imgUrl,
           imageWidth: 150,
           imageHeight: 150,
@@ -86,7 +86,7 @@ export default function RecipeGenerator({ setResult }) {
           confirmButtonText: 'Confirm',
           preConfirm: (value) => {
             if (!value) {
-                Swal.showValidationMessage('Please enter a valid ingredient!');
+                Swal.showValidationMessage('Please provide a valid ingredient!');
             }
             return value;
           }
@@ -103,21 +103,19 @@ export default function RecipeGenerator({ setResult }) {
 
     function noIngredientDetected(imgUrl) {
       MySwal.fire({
-        title: 'Ingredient Undetected',
-        text: 'You can choose to input the name ingredient in the input below.',
-        imageUrl: imgUrl,
-        imageWidth: 150,
-        imageHeight: 150,
+        title: 'Ingredient Not Found',
+        text: 'You can enter the ingredient name in the input field below.',
+        icon: 'error',
         inputLabel: 'Ingredient Name: ',
         input: 'text',
         inputPlaceholder: 'Mango',
         showCancelButton: true,
         confirmButtonText: 'Confirm',
         preConfirm: (value) => {
-            if (!value) {
-                Swal.showValidationMessage('Please enter a valid ingredient!');
-            }
-            return value;
+          if (!value) {
+              Swal.showValidationMessage('Please enter a valid ingredient name.');
+          }
+          return value;
         }
       }).then((result) => {
         if (result.isConfirmed) {

@@ -97,7 +97,7 @@ async function analyzeFood(imageUrl) {
         content: [
           {
             type: "text",
-            text: `Analyze and tell me the estimate nutrient of the FOOD in the image. Return a VALID JSON STRING with the following structure: \
+            text: `Analyze the image and tell me the estimate nutrient of the FOOD in the image. Return a VALID JSON STRING with the following structure: \
                   { \
                     \"ai_message\": String, \
                     \"image_is_intelligible\": Boolean, \
@@ -108,11 +108,8 @@ async function analyzeFood(imageUrl) {
                     \"is_healthy\": Boolean \
                   }. \
                   ENSURE: \
-                  1. ALL responses, explanations, or remarks are included ONLY in the \"ai_message\" key. \
-                  2. The \"nutrients\" key must contain an array of objects, where each object has \"name\" (e.g., 'protein') and \"amount\" (e.g., '35g'). \
-                  3. The response is ALWAYS a valid JSON string. \
-                  4. STRICTLY No additional text outside the JSON structure is returned.
-                  5.ALWAYS RETURN A JSON STRING`
+                  1. The \"nutrients\" key must contain an array of objects, where each object has \"name\" (e.g., 'protein') and \"amount\" (e.g., '35g'). \
+                  2. The response is ALWAYS a valid JSON string.`
           },
           {
             type: "image_url",
