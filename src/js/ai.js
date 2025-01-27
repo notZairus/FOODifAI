@@ -6,7 +6,7 @@ import { extractJson } from "./functions";
 export async function generateRecipe(arrayOfIngredients) {
   console.log('generating recipe...');
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_KEY);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-8b" });
 
   let ingredients = arrayOfIngredients.map(ingredient => ingredient.ingredient).join(", ");
 
@@ -40,7 +40,7 @@ export async function generateRecipe(arrayOfIngredients) {
 
 export async function processImage(file, prompt) {
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_KEY);
-  const model = genAI.getGenerativeModel({ model: 'models/gemini-1.5-pro' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-8b' });
 
   const base64Data = await convertFileToBase64(file);
 
