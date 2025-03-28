@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        mmo: ['MMO', 'sans-serif'], // Add your custom font
+        mmo: ['MMO', 'sans-serif'], 
       },
       colors: {
         accent: "#8FA004",
