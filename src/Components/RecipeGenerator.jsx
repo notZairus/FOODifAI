@@ -128,7 +128,7 @@ export default function RecipeGenerator({ setResult }) {
       }).then((result) => {
         if (result.isConfirmed) {
           const id = nanoid();
-          setIngredients((prev) => ([...prev, {'id': id, 'image_url': imgUrl, 'ingredient': result.value}]));
+          setIngredients((prev) => ([...prev, {'id': id, 'image_url':  "https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ=", 'ingredient': result.value}]));
         } 
       })
     }
