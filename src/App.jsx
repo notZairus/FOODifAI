@@ -143,7 +143,7 @@ function App() {
         )}
         
       </main> 
-      <footer className="text-white bg-accent absolute bottom-0 w-full text-center py-2">Developer: Zairus V. Bermillo</footer>
+      {/* <footer className="text-white bg-accent absolute bottom-0 w-full text-center py-2">Developer: Zairus V. Bermillo</footer> */}
     </div>
   )
 }
