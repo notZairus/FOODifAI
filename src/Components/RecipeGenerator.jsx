@@ -141,7 +141,7 @@ export default function RecipeGenerator({ setResult }) {
       setResult(recipe);
     } catch (error) {
       setResult({
-        "ai_message": "You didn't give enough ingredient.",
+        "ai_message": "There is no dish to make using the provided ingredients.",
         "is_ingredient": false,
       });
     }
@@ -201,6 +201,9 @@ export default function RecipeGenerator({ setResult }) {
             }
           </div>
 
+          {ingredients.length <= 3 && (
+            <p className="font-sans text-sm">You need to provide {4 - ingredients.length} more ingredient/s.</p>
+          )}
           {ingredients.length > 3 && 
             <div className="w-full flex justify-center">
               <button 

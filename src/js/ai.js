@@ -13,7 +13,7 @@ export async function generateRecipe(arrayOfIngredients) {
   let prompt = `Tell me what common Filipino recipe I can make with these ingredients: ${ingredients}.
                 Strictly return a json structure with this structure:
                   { \
-                      \"ai_message\": \"A brief message about the provided or missing ingredients.\", \
+                      \"ai_message\": \"A brief message about the provided or missing ingredients. If there is no dish possible to make using the provided ingredients, say no dishes to make using the provided ingredients\", \
                       \"is_ingredient\": true/false, \
                       \"name\": \"Name of the Filipino recipe\", \
                       \"ingredients\": [ \
