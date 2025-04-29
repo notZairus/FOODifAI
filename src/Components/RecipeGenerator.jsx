@@ -54,7 +54,9 @@ export default function RecipeGenerator({ setResult }) {
 
           // prompt the ai to process the image
           let result = await processImage(imgFile, `
-            Analyze and tell me what ingredient is in the image. You STRICTLY need to respond with a JSON string starting with '{' and ends with '}' the json structure is: 
+            Analyze and tell me what ingredient is in the image.
+            If there is no ingredient in the image just say image is unintelligible.
+            You STRICTLY need to respond with a JSON string starting with '{' and ends with '}' the json structure is: 
               "{
                 "ai_message": string,
                 "image_is_intelligible": boolean,
