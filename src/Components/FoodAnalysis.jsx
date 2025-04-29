@@ -60,6 +60,7 @@ export default function FoodAnalysis({ setResult }) {
               ENSURE: \
               1. The \"nutrients\" key must contain an array of objects, where each object has \"name\" (e.g., 'protein') and \"amount\" (e.g., '35g'). \
               2. The response is ALWAYS a valid JSON string.
+              3. There is always an estimation of nutrients if the image is food
             `);
             setResult(extractJson(result));
           } catch(error) {
